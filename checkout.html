@@ -25,13 +25,13 @@
 
     // If already logged in, redirect to dashboard
     _supabase.auth.getSession().then(function(res) {
-      if (res.data.session) { window.location.href = 'dashboard.html'; }
+      if (res.data.session) { window.location.href = '/home'; }
     });
 
     // Listen for password recovery event — redirect to dashboard to handle it
     _supabase.auth.onAuthStateChange(function(event, session) {
       if (event === 'PASSWORD_RECOVERY') {
-        window.location.href = 'dashboard.html' + window.location.hash;
+        window.location.href = '/home' + window.location.hash;
       }
     });
   </script>
@@ -1130,7 +1130,7 @@ function applyCoupon() {
 
 function handleGetPlan() {
   if (couponApplied) {
-    window.location.href = 'dashboard.html';
+    window.location.href = '/home';
     return;
   }
   var selected = document.querySelector('.plan-option.selected');
@@ -1150,7 +1150,7 @@ function openCheckout(planId, planName) {
   // Create the Whop checkout div
   var checkoutDiv = document.createElement('div');
   checkoutDiv.setAttribute('data-whop-checkout-plan-id', planId);
-  checkoutDiv.setAttribute('data-whop-checkout-return-url', window.location.origin + '/dashboard.html?paid=true');
+  checkoutDiv.setAttribute('data-whop-checkout-return-url', window.location.origin + '//home?paid=true');
   checkoutDiv.setAttribute('data-whop-checkout-theme', 'light');
   checkoutDiv.setAttribute('data-whop-checkout-theme-accent-color', '#C07A5C');
   embed.appendChild(checkoutDiv);
@@ -1399,7 +1399,7 @@ async function handleAuth() {
         return;
       }
       // If auto-confirmed, go to dashboard
-      window.location.href = 'dashboard.html';
+      window.location.href = '/home';
     } else {
       var res = await _supabase.auth.signInWithPassword({ email: email, password: pass });
       if (res.error) {
@@ -1409,7 +1409,7 @@ async function handleAuth() {
         btn.textContent = 'Log In';
         return;
       }
-      window.location.href = 'dashboard.html';
+      window.location.href = '/home';
     }
   } catch (e) {
     errEl.textContent = 'Something went wrong. Please try again.';
@@ -1434,7 +1434,7 @@ async function handleForgotPassword() {
 
   try {
     var res = await _supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: window.location.origin + '/dashboard.html'
+      redirectTo: window.location.origin + '//home'
     });
     if (res.error) {
       errEl.textContent = res.error.message;
