@@ -1,6 +1,6 @@
 {
   "cleanUrls": true,
   "rewrites": [
-    { "source": "/home", "destination": "/dashboard.html" }
+    { "source": "/home", "destination": "/dashboard" }
   ]
 }
