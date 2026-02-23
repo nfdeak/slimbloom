@@ -28,7 +28,7 @@
 
   _supabase.auth.getSession().then(function(res) {
     if (!res.data.session && !_isRecovery) {
-      window.location.href = 'checkout.html';
+      window.location.href = '/checkout';
     } else if (res.data.session) {
       _currentUser = res.data.session.user;
       _currentSession = res.data.session;
@@ -41,7 +41,7 @@
   // Listen for auth state changes (e.g. token refresh, sign out)
   _supabase.auth.onAuthStateChange(function(event, session) {
     if (event === 'SIGNED_OUT') {
-      window.location.href = 'checkout.html';
+      window.location.href = '/checkout';
     }
     if (event === 'PASSWORD_RECOVERY') {
       document.body.style.visibility = 'visible';
@@ -119,7 +119,7 @@
 
   async function handleSignOut() {
     await _supabase.auth.signOut();
-    window.location.href = 'checkout.html';
+    window.location.href = '/checkout';
   }
 </script>
 <style>
@@ -1220,7 +1220,7 @@
 
       <div class="settings-group">
         <div class="settings-group-title">SUPPORT</div>
-        <div class="settings-item" onclick="window.location.href='support.html'">
+        <div class="settings-item" onclick="window.location.href='/support'">
           <div class="settings-item-left">
             <span class="settings-item-icon">💬</span>
             <span class="settings-item-label">Help Center</span>
@@ -1593,7 +1593,7 @@
         <p style="font-size:14px;color:#8A8279;line-height:1.5;margin-bottom:12px;">
           You don't have an active subscription. Choose a plan to get started.
         </p>
-        <button class="sp-save-btn" onclick="window.location.href='checkout.html'">
+        <button class="sp-save-btn" onclick="window.location.href='/checkout'">
           View Plans
         </button>
       </div>
