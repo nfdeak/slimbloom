@@ -38,6 +38,17 @@
     if (event === 'SIGNED_OUT') {
       window.location.href = 'checkout.html';
     }
+    if (event === 'PASSWORD_RECOVERY') {
+      var newPass = prompt('Enter your new password (min 6 characters):');
+      if (newPass && newPass.length >= 6) {
+        _supabase.auth.updateUser({ password: newPass }).then(function(res) {
+          if (res.error) { alert('Error: ' + res.error.message); }
+          else { alert('Password updated successfully!'); }
+        });
+      } else if (newPass) {
+        alert('Password must be at least 6 characters.');
+      }
+    }
     if (session) {
       _currentUser = session.user;
       _currentSession = session;
