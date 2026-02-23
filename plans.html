@@ -1131,7 +1131,16 @@ function applyCoupon() {
 
 function handleGetPlan() {
   if (couponApplied) {
-    window.location.href = '/home';
+    // Open signup modal — user needs an account before accessing dashboard
+    _authMode = 'signup';
+    updateAuthUI();
+    document.getElementById('loginOverlay').classList.add('open');
+    document.getElementById('loginError').style.display = 'none';
+    document.getElementById('loginSuccess').style.display = 'none';
+    document.getElementById('loginEmail').value = '';
+    document.getElementById('loginPass').value = '';
+    document.getElementById('loginSubmitBtn').disabled = false;
+    setTimeout(function() { document.getElementById('loginEmail').focus(); }, 100);
     return;
   }
   var selected = document.querySelector('.plan-option.selected');
@@ -1151,7 +1160,7 @@ function openCheckout(planId, planName) {
   // Create the Whop checkout div
   var checkoutDiv = document.createElement('div');
   checkoutDiv.setAttribute('data-whop-checkout-plan-id', planId);
-  checkoutDiv.setAttribute('data-whop-checkout-return-url', window.location.origin + '//home?paid=true');
+  checkoutDiv.setAttribute('data-whop-checkout-return-url', window.location.origin + '/home?paid=true');
   checkoutDiv.setAttribute('data-whop-checkout-theme', 'light');
   checkoutDiv.setAttribute('data-whop-checkout-theme-accent-color', '#C07A5C');
   embed.appendChild(checkoutDiv);
