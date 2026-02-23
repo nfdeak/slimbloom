@@ -1571,10 +1571,10 @@
     var cu = document.getElementById('weight-unit').textContent;
     var gw = document.getElementById('target-display').textContent;
     var gu = document.getElementById('target-unit').textContent;
-    localStorage.setItem('lwl_current_weight', cw);
-    localStorage.setItem('lwl_current_unit', cu);
-    localStorage.setItem('lwl_goal_weight', gw);
-    localStorage.setItem('lwl_goal_unit', gu);
+    sessionStorage.setItem('lwl_current_weight', cw);
+    sessionStorage.setItem('lwl_current_unit', cu);
+    sessionStorage.setItem('lwl_goal_weight', gw);
+    sessionStorage.setItem('lwl_goal_unit', gu);
     window.location.href = '/plans';
   }
 

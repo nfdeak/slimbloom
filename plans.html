@@ -1087,10 +1087,10 @@
 <script>
 // ===== POPULATE WEIGHT FROM FUNNEL =====
 (function() {
-  var cw = localStorage.getItem('lwl_current_weight');
-  var cu = localStorage.getItem('lwl_current_unit') || 'lbs';
-  var gw = localStorage.getItem('lwl_goal_weight');
-  var gu = localStorage.getItem('lwl_goal_unit') || 'lbs';
+  var cw = sessionStorage.getItem('lwl_current_weight');
+  var cu = sessionStorage.getItem('lwl_current_unit') || 'lbs';
+  var gw = sessionStorage.getItem('lwl_goal_weight');
+  var gu = sessionStorage.getItem('lwl_goal_unit') || 'lbs';
   if (cw && gw) {
     var cwNum = parseInt(cw, 10);
     var gwNum = parseInt(gw, 10);

@@ -62,7 +62,7 @@
     var greetEl = document.getElementById('topNavGreeting');
     // Check for saved display name first
     var savedProfile = null;
-    try { var p = localStorage.getItem('lwl_profile'); if (p) savedProfile = JSON.parse(p); } catch(e) {}
+    try { var p = sessionStorage.getItem('lwl_profile'); if (p) savedProfile = JSON.parse(p); } catch(e) {}
     var displayName = (savedProfile && savedProfile.displayName) ? savedProfile.displayName : '';
     if (!displayName) {
       displayName = email.split('@')[0];
@@ -1695,6 +1695,13 @@
 </div>
 
 <script>
+  // ===== HTML SANITIZER =====
+  function escHtml(str) {
+    var d = document.createElement('div');
+    d.textContent = str;
+    return d.innerHTML;
+  }
+
   // ===== WORKOUT DATA (Defaults) =====
   var DEFAULT_WORKOUT_SCHEDULE = [
     { title: 'Morning Yoga Flow', emoji: '🧘', duration: 15, difficulty: 'Beginner', diffColor: '#22c55e', category: 'yoga', desc: 'Gentle stretching and breathing exercises designed for flexibility and calm. Perfect start to your day.', cal: 85 },
@@ -1883,29 +1890,29 @@
     if (w.isRest) {
       workoutCard.innerHTML =
         '<div style="text-align:center;padding:12px 0;">' +
-          '<div style="font-size:48px;margin-bottom:12px;">' + w.emoji + '</div>' +
-          '<div style="font-size:20px;font-weight:700;margin-bottom:6px;">' + w.title + '</div>' +
+          '<div style="font-size:48px;margin-bottom:12px;">' + escHtml(w.emoji) + '</div>' +
+          '<div style="font-size:20px;font-weight:700;margin-bottom:6px;">' + escHtml(w.title) + '</div>' +
           '<div class="workout-card-meta" style="justify-content:center;margin-bottom:12px;">' +
-            '<span class="meta-badge meta-badge-duration">⏱ ' + w.duration + ' min</span>' +
-            '<span class="meta-badge meta-badge-difficulty"><span style="color:' + w.diffColor + '">●</span> ' + w.difficulty + '</span>' +
+            '<span class="meta-badge meta-badge-duration">⏱ ' + parseInt(w.duration) + ' min</span>' +
+            '<span class="meta-badge meta-badge-difficulty"><span style="color:' + escHtml(w.diffColor) + '">●</span> ' + escHtml(w.difficulty) + '</span>' +
           '</div>' +
-          '<p class="workout-card-desc" style="text-align:center;">' + w.desc + '</p>' +
+          '<p class="workout-card-desc" style="text-align:center;">' + escHtml(w.desc) + '</p>' +
         '</div>';
       return;
     }
 
     workoutCard.innerHTML =
       '<div class="workout-card-header">' +
-        '<div class="workout-card-emoji">' + w.emoji + '</div>' +
+        '<div class="workout-card-emoji">' + escHtml(w.emoji) + '</div>' +
         '<div class="workout-card-info">' +
-          '<div class="workout-card-title">' + w.title + '</div>' +
+          '<div class="workout-card-title">' + escHtml(w.title) + '</div>' +
           '<div class="workout-card-meta">' +
-            '<span class="meta-badge meta-badge-duration">⏱ ' + w.duration + ' min</span>' +
-            '<span class="meta-badge meta-badge-difficulty"><span style="color:' + w.diffColor + '">●</span> ' + w.difficulty + '</span>' +
+            '<span class="meta-badge meta-badge-duration">⏱ ' + parseInt(w.duration) + ' min</span>' +
+            '<span class="meta-badge meta-badge-difficulty"><span style="color:' + escHtml(w.diffColor) + '">●</span> ' + escHtml(w.difficulty) + '</span>' +
           '</div>' +
         '</div>' +
       '</div>' +
-      '<p class="workout-card-desc">' + w.desc + '</p>' +
+      '<p class="workout-card-desc">' + escHtml(w.desc) + '</p>' +
       '<button class="start-workout-btn" onclick="startWorkout()">▶ START WORKOUT</button>';
   }
 
@@ -1927,14 +1934,14 @@
     list.forEach(function(w) {
       var card = document.createElement('div');
       card.className = 'workout-lib-card';
-      var thumbContent = w.imageUrl ? '<img src="' + w.imageUrl + '" alt="' + w.title + '" onerror="this.remove();this.parentElement.textContent=\'' + w.emoji + '\'">' : w.emoji;
+      var thumbContent = w.imageUrl ? '<img src="' + escHtml(w.imageUrl) + '" alt="' + escHtml(w.title) + '" onerror="this.remove();this.parentElement.textContent=\'' + escHtml(w.emoji).replace(/'/g, '\\&#39;') + '\'">' : escHtml(w.emoji);
       card.innerHTML =
         '<div class="workout-lib-thumb">' + thumbContent + '</div>' +
         '<div class="workout-lib-body">' +
-          '<div class="workout-lib-name">' + w.title + '</div>' +
+          '<div class="workout-lib-name">' + escHtml(w.title) + '</div>' +
           '<div class="workout-lib-badges">' +
-            '<span class="badge-sm badge-duration">' + w.duration + ' min</span>' +
-            '<span class="badge-sm badge-difficulty">' + w.difficulty + '</span>' +
+            '<span class="badge-sm badge-duration">' + parseInt(w.duration) + ' min</span>' +
+            '<span class="badge-sm badge-difficulty">' + escHtml(w.difficulty) + '</span>' +
           '</div>' +
         '</div>';
       card.addEventListener('click', function() { launchWorkout(w); });
@@ -2146,7 +2153,7 @@
     if (video) {
       if (video.type === 'direct') {
         // Native <video> — full control, no UI overlays
-        videoBg.innerHTML = '<video src="' + video.url + '" autoplay loop muted playsinline></video>';
+        videoBg.innerHTML = '<video src="' + escHtml(video.url) + '" autoplay loop muted playsinline></video>';
       } else {
         // YouTube/Vimeo iframe fallback
         var iframeSrc = '';
@@ -2348,7 +2355,7 @@
     setTimeout(function() { t.classList.remove('show'); }, 2500);
   }
 
-  // ===== LOCAL STORAGE HELPERS =====
+  // ===== SESSION STORAGE HELPERS =====
   var LS_GOALS = 'lwl_goals';
   var LS_PROFILE = 'lwl_profile';
   var LS_NOTIFS = 'lwl_notifications';
@@ -2356,12 +2363,12 @@
 
   function lsGet(key, fallback) {
     try {
-      var v = localStorage.getItem(key);
+      var v = sessionStorage.getItem(key);
       return v ? JSON.parse(v) : fallback;
     } catch(e) { return fallback; }
   }
   function lsSet(key, val) {
-    try { localStorage.setItem(key, JSON.stringify(val)); } catch(e) {}
+    try { sessionStorage.setItem(key, JSON.stringify(val)); } catch(e) {}
   }
 
   // Default goals
@@ -2410,7 +2417,7 @@
       var row = document.createElement('div');
       row.className = 'sp-row';
       row.innerHTML = '<span class="sp-row-label">' + dayNames[i] + '</span>' +
-        '<span class="sp-row-value">' + w.emoji + ' ' + w.title + '</span>';
+        '<span class="sp-row-value">' + escHtml(w.emoji) + ' ' + escHtml(w.title) + '</span>';
       listEl.appendChild(row);
     });
   }
@@ -2520,8 +2527,8 @@
           '<div class="sp-history-num">' + d.getDate() + '</div>' +
         '</div>' +
         '<div class="sp-history-info">' +
-          '<div class="sp-history-name">' + (h.name || 'Workout') + '</div>' +
-          '<div class="sp-history-meta">' + (h.minutes || 0) + ' min &middot; ' + (h.calories || 0) + ' cal</div>' +
+          '<div class="sp-history-name">' + escHtml(h.name || 'Workout') + '</div>' +
+          '<div class="sp-history-meta">' + parseInt(h.minutes || 0) + ' min &middot; ' + parseInt(h.calories || 0) + ' cal</div>' +
         '</div>' +
         '<div class="sp-history-status">&#10003;</div>';
       listEl.appendChild(item);
@@ -2836,7 +2843,7 @@
   (function() {
     var params = new URLSearchParams(window.location.search);
     if (params.get('paid') === 'true' || params.get('status') === 'success') {
-      localStorage.setItem('lwl_paid', 'true');
+      sessionStorage.setItem('lwl_paid', 'true');
       // Clean up URL
       window.history.replaceState({}, '', window.location.pathname);
       setTimeout(function() { showToast('Payment successful! Welcome to your plan!'); }, 500);

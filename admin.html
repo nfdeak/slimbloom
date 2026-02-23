@@ -724,10 +724,21 @@ function attemptLogin() {
         btn.textContent = 'Sign In';
         return;
       }
-      _adminSession = result.data.session;
-      document.getElementById('login-gate').style.display = 'none';
-      document.getElementById('admin-panel').style.display = 'block';
-      loadAndRender();
+      // Verify admin status server-side before showing panel
+      return verifyAdmin(result.data.session).then(function(isAdmin) {
+        if (!isAdmin) {
+          _sb.auth.signOut();
+          errorEl.textContent = 'Access denied. This account is not an admin.';
+          errorEl.style.display = 'block';
+          btn.disabled = false;
+          btn.textContent = 'Sign In';
+          return;
+        }
+        _adminSession = result.data.session;
+        document.getElementById('login-gate').style.display = 'none';
+        document.getElementById('admin-panel').style.display = 'block';
+        loadAndRender();
+      });
     })
     .catch(function(err) {
       errorEl.textContent = 'Login failed: ' + err.message;
@@ -782,14 +793,14 @@ function renderSchedule() {
     html += '<div class="admin-card-header" onclick="toggleCard(\'sched-card-' + i + '\')">';
     html += '<div class="admin-card-title">';
     html += '<span class="day-label">' + DAY_NAMES[i] + '</span>';
-    html += '<span>' + w.emoji + ' ' + w.title + '</span>';
+    html += '<span>' + escHtml(w.emoji) + ' ' + escHtml(w.title) + '</span>';
     html += '</div>';
     html += '<span class="admin-card-arrow">&#8250;</span>';
     html += '</div>';
     html += '<div class="admin-card-body">';
     html += '<div class="form-row">';
     html += '<div class="form-group"><label class="form-label">Title</label><input class="form-input" data-sched="' + i + '" data-field="title" value="' + escHtml(w.title) + '" onchange="updateScheduleField(this)"></div>';
-    html += '<div class="form-group"><label class="form-label">Emoji</label><input class="form-input short" data-sched="' + i + '" data-field="emoji" value="' + w.emoji + '" onchange="updateScheduleField(this)"></div>';
+    html += '<div class="form-group"><label class="form-label">Emoji</label><input class="form-input short" data-sched="' + i + '" data-field="emoji" value="' + escHtml(w.emoji) + '" onchange="updateScheduleField(this)"></div>';
     html += '</div>';
     html += '<div class="form-row triple">';
     html += '<div class="form-group"><label class="form-label">Duration (min)</label><input class="form-input" type="number" min="1" data-sched="' + i + '" data-field="duration" value="' + w.duration + '" onchange="updateScheduleField(this)"></div>';
@@ -835,7 +846,7 @@ function renderLibrary() {
     html += '<div class="item-card-header"><span class="item-card-num">#' + (i + 1) + '</span><button class="item-remove-btn" onclick="removeLibraryItem(' + i + ')">Remove</button></div>';
     html += '<div class="form-row">';
     html += '<div class="form-group"><label class="form-label">Title</label><input class="form-input" data-lib="' + i + '" data-field="title" value="' + escHtml(w.title) + '" onchange="updateLibraryField(this)"></div>';
-    html += '<div class="form-group"><label class="form-label">Emoji</label><input class="form-input short" data-lib="' + i + '" data-field="emoji" value="' + w.emoji + '" onchange="updateLibraryField(this)"></div>';
+    html += '<div class="form-group"><label class="form-label">Emoji</label><input class="form-input short" data-lib="' + i + '" data-field="emoji" value="' + escHtml(w.emoji) + '" onchange="updateLibraryField(this)"></div>';
     html += '</div>';
     html += '<div class="form-row triple">';
     html += '<div class="form-group"><label class="form-label">Duration</label><input class="form-input" type="number" min="1" data-lib="' + i + '" data-field="duration" value="' + w.duration + '" onchange="updateLibraryField(this)"></div>';
@@ -884,7 +895,7 @@ function validateLibVideoInput(el, idx) {
 
 function imgPreviewHtml(url, fallbackEmoji) {
   if (url && url.trim()) {
-    return '<img src="' + escHtml(url) + '" onerror="this.parentElement.innerHTML=\'<span class=img-preview-empty>' + (fallbackEmoji || '🖼') + '</span>\'">';
+    return '<img src="' + escHtml(url) + '" onerror="this.parentElement.innerHTML=\'<span class=img-preview-empty>' + escHtml(fallbackEmoji || '🖼') + '</span>\'">';
   }
   return '<span class="img-preview-empty">' + (fallbackEmoji || 'No img') + '</span>';
 }
@@ -1166,13 +1177,30 @@ function loadAndRender() {
   });
 }
 
+// Server-side admin verification
+function verifyAdmin(session) {
+  return fetch('/api/check-admin', {
+    method: 'GET',
+    headers: { 'Authorization': 'Bearer ' + session.access_token }
+  })
+  .then(function(r) { return r.ok; })
+  .catch(function() { return false; });
+}
+
 // Check for existing Supabase session on load
 _sb.auth.getSession().then(function(result) {
   if (result.data && result.data.session) {
-    _adminSession = result.data.session;
-    document.getElementById('login-gate').style.display = 'none';
-    document.getElementById('admin-panel').style.display = 'block';
-    loadAndRender();
+    verifyAdmin(result.data.session).then(function(isAdmin) {
+      if (isAdmin) {
+        _adminSession = result.data.session;
+        document.getElementById('login-gate').style.display = 'none';
+        document.getElementById('admin-panel').style.display = 'block';
+        loadAndRender();
+      } else {
+        // Not admin — sign out and stay on login screen
+        _sb.auth.signOut();
+      }
+    });
   }
 });
 </script>
