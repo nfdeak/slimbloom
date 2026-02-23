@@ -69,28 +69,6 @@
     font-size: 13px;
     color: #9B9590;
   }
-  .skip-btn {
-    background: rgba(45, 42, 38, 0.08);
-    color: #8A8279;
-    border: none;
-    padding: 8px 14px;
-    border-radius: 20px;
-    font-size: 11px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-family: inherit;
-    letter-spacing: 0.3px;
-    text-decoration: none;
-    display: inline-block;
-    margin-top: 12px;
-    align-self: center;
-  }
-  .skip-btn:hover {
-    background: rgba(45, 42, 38, 0.15);
-    color: #2D2A26;
-  }
-
   /* Landing nav (step 1 only) */
   .landing-nav {
     display: flex;
@@ -299,7 +277,7 @@
 
   /* Active press state for interactive elements */
   .option-card:active, .radio-card:active, .zone-btn:active,
-  .chip:active, .continue-btn:active, .age-card:active, .skip-btn:active {
+  .chip:active, .continue-btn:active, .age-card:active {
     transform: scale(0.97);
     transition: transform 0.1s ease;
   }
@@ -788,7 +766,7 @@
           <button class="age-card-btn">75+ <span>&#10095;</span></button>
         </div>
       </div>
-      <p class="terms-text">By continuing, you confirm that you have read, understood, and agreed to our <a href="#">Terms of Use</a>, <a href="#">Privacy Policy</a>, and <a href="#">Refund Policy</a>.</p>
+      <p class="terms-text">By continuing, you confirm that you have read, understood, and agreed to our <a href="/terms-of-use" target="_blank">Terms of Use</a>, <a href="/privacy-policy" target="_blank">Privacy Policy</a>, and <a href="/refund-policy" target="_blank">Refund Policy</a>.</p>
     </div>
   </div>
 
@@ -1652,16 +1630,6 @@
     <div class="category-label" id="category-label" style="display:none;"></div>
   `);
 
-  // Inject skip button into every step (except step 1 landing and step 35 loading)
-  document.querySelectorAll('.step').forEach(function(step) {
-    var stepNum = parseInt(step.dataset.step);
-    if (stepNum === 1 || stepNum === 35) return; // no skip on landing or loading
-    var skip = document.createElement('a');
-    skip.href = '/plans';
-    skip.className = 'skip-btn';
-    skip.innerHTML = 'Skip to plan &rarr;';
-    step.appendChild(skip);
-  });
 
   // ===== HAPTIC FEEDBACK SYSTEM =====
   function triggerHaptic(style) {
@@ -1679,7 +1647,7 @@
 
   // Add haptic to all interactive elements
   document.addEventListener('click', function(e) {
-    var target = e.target.closest('button, .option-card, .radio-card, .zone-btn, .chip, .age-card, .continue-btn, .skip-btn, .unit-toggle button, a[href]');
+    var target = e.target.closest('button, .option-card, .radio-card, .zone-btn, .chip, .age-card, .continue-btn, .unit-toggle button, a[href]');
     if (!target) return;
 
     triggerHaptic('light');
