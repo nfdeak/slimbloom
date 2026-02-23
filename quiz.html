@@ -11,7 +11,7 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://lazyweightloss.com/quiz">
+<meta property="og:url" content="https://lazyweightloss.com">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Lazy Weight Loss — Your Personalized Plan">
 <meta name="twitter:description" content="A personalized weight loss plan designed for women 45+. Take the free quiz and get started today.">
@@ -83,6 +83,39 @@
   .skip-btn:hover {
     background: rgba(45, 42, 38, 0.15);
     color: #2D2A26;
+  }
+
+  /* Landing nav (step 1 only) */
+  .landing-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    width: 100%;
+  }
+  .landing-nav-brand {
+    font-size: 18px;
+    font-weight: 700;
+    color: #2D2A26;
+  }
+  .landing-nav-brand span {
+    color: #C07A5C;
+  }
+  .landing-nav-login {
+    border: 1.5px solid #C07A5C;
+    color: #C07A5C;
+    background: transparent;
+    padding: 8px 20px;
+    border-radius: 24px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+  .landing-nav-login:hover {
+    background: #C07A5C;
+    color: #fff;
   }
 
   /* Progress Bar */
@@ -648,8 +681,9 @@
 
   <!-- ========== STEP 1: Landing / Age Selection ========== -->
   <div class="step active" data-step="1">
-    <div style="padding: 16px 20px;">
-      <div style="text-align:center;font-weight:700;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;">Fit & Fabulous</div>
+    <div class="landing-nav">
+      <div class="landing-nav-brand">Lazy<span>WeightLoss</span></div>
+      <a href="/plans" class="landing-nav-login" onclick="event.preventDefault(); window.location.href='/plans';">Log In</a>
     </div>
     <div style="padding: 0 20px; width:100%;">
       <h2 class="landing-title">Personalized weight loss plan for your age</h2>
@@ -1536,10 +1570,10 @@
     <div class="category-label" id="category-label" style="display:none;"></div>
   `);
 
-  // Inject skip button into every step (except step 35 loading)
+  // Inject skip button into every step (except step 1 landing and step 35 loading)
   document.querySelectorAll('.step').forEach(function(step) {
     var stepNum = parseInt(step.dataset.step);
-    if (stepNum === 35) return; // no skip on loading screen
+    if (stepNum === 1 || stepNum === 35) return; // no skip on landing or loading
     var skip = document.createElement('a');
     skip.href = '/plans';
     skip.className = 'skip-btn';
