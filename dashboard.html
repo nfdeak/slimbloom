@@ -1219,7 +1219,7 @@
       </div>
       <div class="progress-stat">
         <div class="progress-stat-icon">🏆</div>
-        <div class="progress-stat-value">3</div>
+        <div class="progress-stat-value" id="stat-streak">0</div>
         <div class="progress-stat-label">Day Streak</div>
       </div>
     </div>
@@ -2733,6 +2733,39 @@
     return lsGet(LS_HISTORY, []);
   }
 
+  function calculateStreak() {
+    var history = getWorkoutHistory();
+    var streak = 0;
+    var today = new Date();
+    today.setHours(0,0,0,0);
+    var checkDate = new Date(today);
+    for (var d = 0; d < 90; d++) {
+      var dateStr = checkDate.toDateString();
+      var found = history.some(function(h) {
+        return new Date(h.date).toDateString() === dateStr;
+      });
+      if (found) {
+        streak++;
+        checkDate.setDate(checkDate.getDate() - 1);
+      } else if (d === 0) {
+        checkDate.setDate(checkDate.getDate() - 1);
+      } else {
+        break;
+      }
+    }
+    return streak;
+  }
+
+  function updateAllStreakDisplays() {
+    var streak = calculateStreak();
+    var planEl = document.getElementById('stat-streak');
+    if (planEl) planEl.textContent = streak;
+    var statCards = document.querySelectorAll('.profile-stat-card');
+    if (statCards[3]) statCards[3].querySelector('.profile-stat-value').textContent = streak + ' \uD83D\uDD25';
+    var phEl = document.getElementById('ph-streak');
+    if (phEl) phEl.textContent = streak + ' day' + (streak !== 1 ? 's' : '');
+  }
+
   function addWorkoutToHistory(workoutName, minutes, calories) {
     var history = getWorkoutHistory();
     history.unshift({
@@ -2760,27 +2793,8 @@
     document.getElementById('ph-total-minutes').textContent = totalMinutes;
     document.getElementById('ph-total-calories').textContent = totalCalories;
 
-    // Calculate streak
-    var streak = 0;
-    var today = new Date();
-    today.setHours(0,0,0,0);
-    var checkDate = new Date(today);
-    for (var d = 0; d < 90; d++) {
-      var dateStr = checkDate.toDateString();
-      var found = history.some(function(h) {
-        return new Date(h.date).toDateString() === dateStr;
-      });
-      if (found) {
-        streak++;
-        checkDate.setDate(checkDate.getDate() - 1);
-      } else if (d === 0) {
-        // Allow today to not have a workout yet
-        checkDate.setDate(checkDate.getDate() - 1);
-      } else {
-        break;
-      }
-    }
-    document.getElementById('ph-streak').textContent = streak + ' day' + (streak !== 1 ? 's' : '');
+    // Update all streak displays (My Plan card, Profile card, Progress History)
+    updateAllStreakDisplays();
 
     // Build history list
     var listEl = document.getElementById('ph-history-list');
@@ -3066,26 +3080,7 @@
     var history = getWorkoutHistory();
     var statCards = document.querySelectorAll('.profile-stat-card');
     if (statCards[2]) statCards[2].querySelector('.profile-stat-value').textContent = history.length;
-    // Streak
-    var streak = 0;
-    var today = new Date();
-    today.setHours(0,0,0,0);
-    var checkDate = new Date(today);
-    for (var d = 0; d < 90; d++) {
-      var dateStr = checkDate.toDateString();
-      var found = history.some(function(h) {
-        return new Date(h.date).toDateString() === dateStr;
-      });
-      if (found) {
-        streak++;
-        checkDate.setDate(checkDate.getDate() - 1);
-      } else if (d === 0) {
-        checkDate.setDate(checkDate.getDate() - 1);
-      } else {
-        break;
-      }
-    }
-    if (statCards[3]) statCards[3].querySelector('.profile-stat-value').textContent = streak + ' \uD83D\uDD25';
+    updateAllStreakDisplays();
   }
 
   // ===== INIT PROFILE DATA ON LOAD =====
