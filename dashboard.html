@@ -1982,10 +1982,22 @@
 
   // ===== COUNTDOWN BEEP (Web Audio API) =====
   var _audioCtx = null;
-  function playBeep(freq, duration, vol) {
+  // Unlock audio on iOS — must be called directly from a user tap
+  function unlockAudio() {
     try {
       if (!_audioCtx) _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      // iOS Safari requires resume() after user gesture
+      if (_audioCtx.state === 'suspended') _audioCtx.resume();
+      // Play a silent buffer to fully unlock on iOS
+      var buf = _audioCtx.createBuffer(1, 1, 22050);
+      var src = _audioCtx.createBufferSource();
+      src.buffer = buf;
+      src.connect(_audioCtx.destination);
+      src.start(0);
+    } catch(e) {}
+  }
+  function playBeep(freq, duration, vol) {
+    try {
+      if (!_audioCtx) return; // must be unlocked first
       if (_audioCtx.state === 'suspended') _audioCtx.resume();
       var osc = _audioCtx.createOscillator();
       var gain = _audioCtx.createGain();
@@ -2046,6 +2058,7 @@
   }
 
   function launchWorkout(workoutData) {
+    unlockAudio(); // Must happen inside user tap for iOS beeps
     triggerHaptic('medium');
     var calories = workoutData.cal || Math.round(workoutData.duration * 6);
     workoutData.cal = calories;
