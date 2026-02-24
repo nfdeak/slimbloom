@@ -1015,9 +1015,13 @@
     width: 40px; height: 40px; border-radius: 50%;
     background: rgba(255,255,255,0.7); backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
-    border: none; color: #2D2A26; font-size: 22px;
+    border: none; color: #2D2A26;
     cursor: pointer; display: flex; align-items: center; justify-content: center;
     z-index: 2; transition: background 0.2s;
+    padding: 0;
+  }
+  .preview-back-btn svg {
+    width: 18px; height: 18px;
   }
   .preview-back-btn:hover { background: rgba(255,255,255,0.9); }
   .preview-content {
@@ -1359,7 +1363,7 @@
 <div class="workout-overlay" id="preview-overlay">
   <div class="preview-scroll">
     <div class="preview-hero" id="preview-hero">
-      <button class="preview-back-btn" id="preview-back-btn">&times;</button>
+      <button class="preview-back-btn" id="preview-back-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg></button>
     </div>
     <div class="preview-content">
       <div class="preview-title" id="preview-title">Workout</div>
@@ -2218,7 +2222,7 @@
     }
 
     // Hero image
-    var backBtnHtml = '<button class="preview-back-btn" id="preview-back-btn">&times;</button>';
+    var backBtnHtml = '<button class="preview-back-btn" id="preview-back-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg></button>';
     if (workoutData.imageUrl) {
       heroEl.innerHTML = backBtnHtml + '<img src="' + escHtml(workoutData.imageUrl) + '" alt="' + escHtml(workoutData.title) + '" onerror="this.remove()">';
     } else {
