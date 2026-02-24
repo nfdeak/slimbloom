@@ -194,7 +194,7 @@
     display: none;
     flex-direction: column;
     align-items: center;
-    padding: 0 20px 20px;
+    padding: 0 20px 12px;
     flex: 1;
     overflow-y: auto;
     overflow-x: hidden;
@@ -463,6 +463,10 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    position: sticky;
+    bottom: 0;
+    z-index: 10;
+    box-shadow: 0 -4px 16px rgba(250,246,241,0.9);
   }
   .continue-btn:hover { background: #A8674E; }
   .continue-btn:disabled { background: #E0D6CC; color: #A09891; cursor: not-allowed; }
