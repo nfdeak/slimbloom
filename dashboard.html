@@ -984,6 +984,106 @@
   }
   .player-no-video .player-video-bg { display: none !important; }
 
+  /* ===== WORKOUT PREVIEW SCREEN ===== */
+  #preview-overlay { justify-content: flex-start; }
+  .preview-scroll {
+    width: 100%; flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
+  }
+  .preview-hero {
+    width: 100%; height: 220px; position: relative;
+    background: #1a1714; display: flex; align-items: center; justify-content: center;
+    overflow: hidden; flex-shrink: 0;
+  }
+  .preview-hero img {
+    width: 100%; height: 100%; object-fit: cover;
+  }
+  .preview-hero-emoji {
+    font-size: 80px;
+  }
+  .preview-hero::after {
+    content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 80px;
+    background: linear-gradient(transparent, #2D2A26);
+    pointer-events: none;
+  }
+  .preview-back-btn {
+    position: absolute; top: 16px; left: 16px;
+    top: calc(16px + env(safe-area-inset-top, 0px));
+    width: 40px; height: 40px; border-radius: 50%;
+    background: rgba(0,0,0,0.5); backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: none; color: #fff; font-size: 22px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    z-index: 2; transition: background 0.2s;
+  }
+  .preview-back-btn:hover { background: rgba(0,0,0,0.7); }
+  .preview-content {
+    padding: 20px 20px 24px; width: 100%; max-width: 500px; margin: 0 auto;
+  }
+  .preview-title {
+    font-size: 24px; font-weight: 800; margin-bottom: 4px;
+  }
+  .preview-subtitle {
+    font-size: 14px; color: rgba(255,255,255,0.5); margin-bottom: 20px;
+    line-height: 1.5;
+  }
+  .preview-stats {
+    display: flex; gap: 12px; margin-bottom: 28px;
+  }
+  .preview-stat {
+    flex: 1; background: rgba(255,255,255,0.08); border-radius: 12px;
+    padding: 14px 10px; text-align: center;
+  }
+  .preview-stat-value {
+    font-size: 20px; font-weight: 800; color: #C07A5C; margin-bottom: 2px;
+  }
+  .preview-stat-label {
+    font-size: 11px; color: rgba(255,255,255,0.45); font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .preview-section-title {
+    font-size: 16px; font-weight: 700; margin-bottom: 14px;
+    color: rgba(255,255,255,0.85);
+  }
+  .preview-exercise-list {
+    display: flex; flex-direction: column; gap: 2px;
+  }
+  .preview-exercise-row {
+    display: flex; align-items: center; gap: 14px;
+    padding: 12px 14px; background: rgba(255,255,255,0.05);
+    border-radius: 10px;
+  }
+  .preview-exercise-emoji {
+    width: 40px; height: 40px; border-radius: 10px;
+    background: rgba(255,255,255,0.08);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; flex-shrink: 0;
+  }
+  .preview-exercise-name {
+    flex: 1; font-size: 14px; font-weight: 600;
+  }
+  .preview-exercise-dur {
+    font-size: 13px; color: rgba(255,255,255,0.4); font-weight: 500;
+    flex-shrink: 0;
+  }
+  .preview-rounds {
+    text-align: center; padding: 14px 0 4px;
+    font-size: 13px; color: rgba(255,255,255,0.35); font-weight: 500;
+  }
+  .preview-bottom {
+    width: 100%; padding: 12px 20px;
+    padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    background: linear-gradient(transparent, #2D2A26 30%);
+    flex-shrink: 0;
+  }
+  .preview-start-btn {
+    width: 100%; max-width: 500px; margin: 0 auto; display: block;
+    padding: 16px; background: #C07A5C; color: #fff;
+    border: none; border-radius: 12px; font-size: 16px;
+    font-weight: 700; letter-spacing: 0.5px; cursor: pointer;
+    font-family: inherit; transition: all 0.2s;
+  }
+  .preview-start-btn:hover { background: #A8674E; }
+  .preview-start-btn:active { transform: scale(0.97); }
+
   /* ===== COMPLETION SCREEN ===== */
   .completion-emoji { font-size: 72px; margin-bottom: 20px; animation: completionBounce 0.6s cubic-bezier(0.25, 1, 0.5, 1); }
   @keyframes completionBounce { 0%{transform:scale(0);opacity:0} 60%{transform:scale(1.2)} 100%{transform:scale(1);opacity:1} }
@@ -1012,6 +1112,11 @@
     .player-timer { font-size: 40px; }
     .player-controls { gap: 24px; }
     .completion-stats { gap: 24px; }
+    .preview-hero { height: 180px; }
+    .preview-title { font-size: 20px; }
+    .preview-stat-value { font-size: 18px; }
+    .preview-stats { gap: 8px; }
+    .preview-hero-emoji { font-size: 60px; }
   }
   /* Password reset modal */
   .pw-reset-overlay {
@@ -1240,6 +1345,25 @@
     </div>
   </div>
 
+</div>
+
+<!-- Workout Preview Overlay -->
+<div class="workout-overlay" id="preview-overlay">
+  <div class="preview-scroll">
+    <div class="preview-hero" id="preview-hero">
+      <button class="preview-back-btn" id="preview-back-btn">&times;</button>
+    </div>
+    <div class="preview-content">
+      <div class="preview-title" id="preview-title">Workout</div>
+      <div class="preview-subtitle" id="preview-subtitle"></div>
+      <div class="preview-stats" id="preview-stats"></div>
+      <div class="preview-section-title">Overview</div>
+      <div class="preview-exercise-list" id="preview-exercise-list"></div>
+    </div>
+  </div>
+  <div class="preview-bottom">
+    <button class="preview-start-btn" id="preview-start-btn">Start Workout</button>
+  </div>
 </div>
 
 <!-- Workout Countdown Overlay -->
@@ -1920,7 +2044,7 @@
   function startWorkout() {
     var w = WORKOUT_SCHEDULE[selectedDayIndex];
     if (!w || w.isRest) return;
-    launchWorkout(w);
+    showWorkoutPreview(w);
   }
 
   // ===== WORKOUT GRID =====
@@ -1944,7 +2068,7 @@
             '<span class="badge-sm badge-difficulty">' + escHtml(w.difficulty) + '</span>' +
           '</div>' +
         '</div>';
-      card.addEventListener('click', function() { launchWorkout(w); });
+      card.addEventListener('click', function() { showWorkoutPreview(w); });
       grid.appendChild(card);
     });
   }
@@ -2055,6 +2179,108 @@
     }
     var perExercise = Math.floor(totalSeconds / sequence.length);
     return { exercises: sequence, secondsPerExercise: perExercise };
+  }
+
+  // ===== WORKOUT PREVIEW =====
+  var _previewWorkout = null;
+
+  function showWorkoutPreview(workoutData) {
+    _previewWorkout = workoutData;
+    var overlay = document.getElementById('preview-overlay');
+    var heroEl = document.getElementById('preview-hero');
+    var titleEl = document.getElementById('preview-title');
+    var subtitleEl = document.getElementById('preview-subtitle');
+    var statsEl = document.getElementById('preview-stats');
+    var listEl = document.getElementById('preview-exercise-list');
+
+    // Calculate calories
+    var calories = workoutData.cal || Math.round(workoutData.duration * 6);
+    workoutData.cal = calories;
+
+    // Build exercise sequence
+    var seq;
+    var isVideoWorkout = workoutData.videoUrl && parseVideoUrl(workoutData.videoUrl);
+    if (isVideoWorkout) {
+      seq = {
+        exercises: [{ name: workoutData.title, emoji: workoutData.emoji, anim: 'breathe', videoUrl: workoutData.videoUrl }],
+        secondsPerExercise: workoutData.duration * 60
+      };
+    } else {
+      seq = buildExerciseSequence(workoutData.category, workoutData.duration);
+    }
+
+    // Hero image
+    var backBtnHtml = '<button class="preview-back-btn" id="preview-back-btn">&times;</button>';
+    if (workoutData.imageUrl) {
+      heroEl.innerHTML = backBtnHtml + '<img src="' + escHtml(workoutData.imageUrl) + '" alt="' + escHtml(workoutData.title) + '" onerror="this.remove()">';
+    } else {
+      heroEl.innerHTML = backBtnHtml + '<div class="preview-hero-emoji">' + escHtml(workoutData.emoji || '💪') + '</div>';
+    }
+
+    // Title & subtitle
+    titleEl.textContent = workoutData.title;
+    subtitleEl.textContent = workoutData.desc || (escHtml(workoutData.difficulty) + ' · ' + escHtml(workoutData.category));
+
+    // Stats
+    var exerciseCount = isVideoWorkout ? 1 : seq.exercises.length;
+    var dbExercises = EXERCISE_DB[workoutData.category] || [];
+    var uniqueCount = isVideoWorkout ? 1 : Math.min(exerciseCount, dbExercises.length);
+    statsEl.innerHTML =
+      '<div class="preview-stat"><div class="preview-stat-value">' + parseInt(workoutData.duration) + '</div><div class="preview-stat-label">Minutes</div></div>' +
+      '<div class="preview-stat"><div class="preview-stat-value">' + calories + '</div><div class="preview-stat-label">Calories</div></div>' +
+      '<div class="preview-stat"><div class="preview-stat-value">' + uniqueCount + '</div><div class="preview-stat-label">Exercises</div></div>';
+
+    // Exercise list
+    var listHtml = '';
+    if (isVideoWorkout) {
+      listHtml += '<div class="preview-exercise-row">' +
+        '<div class="preview-exercise-emoji">' + escHtml(workoutData.emoji || '🎬') + '</div>' +
+        '<div class="preview-exercise-name">' + escHtml(workoutData.title) + '</div>' +
+        '<div class="preview-exercise-dur">' + parseInt(workoutData.duration) + ':00</div>' +
+        '</div>';
+    } else {
+      // Show unique exercises (one pass through the DB)
+      var shown = {};
+      seq.exercises.forEach(function(ex) {
+        if (!shown[ex.name]) {
+          shown[ex.name] = true;
+          var durSec = seq.secondsPerExercise;
+          var durStr = Math.floor(durSec / 60) + ':' + ('0' + (durSec % 60)).slice(-2);
+          listHtml += '<div class="preview-exercise-row">' +
+            '<div class="preview-exercise-emoji">' + escHtml(ex.emoji) + '</div>' +
+            '<div class="preview-exercise-name">' + escHtml(ex.name) + '</div>' +
+            '<div class="preview-exercise-dur">' + durStr + '</div>' +
+            '</div>';
+        }
+      });
+      // Show rounds info if exercises repeat
+      var rounds = Math.ceil(exerciseCount / uniqueCount);
+      if (rounds > 1) {
+        listHtml += '<div class="preview-rounds">' + rounds + ' rounds</div>';
+      }
+    }
+    listEl.innerHTML = listHtml;
+
+    // Show overlay
+    document.body.classList.add('overlay-open');
+    overlay.classList.add('active');
+
+    // Scroll to top
+    document.querySelector('.preview-scroll').scrollTop = 0;
+
+    // Wire up buttons
+    document.getElementById('preview-back-btn').addEventListener('click', closePreview);
+    document.getElementById('preview-start-btn').onclick = function() {
+      overlay.classList.remove('active');
+      launchWorkout(_previewWorkout);
+    };
+  }
+
+  function closePreview() {
+    var overlay = document.getElementById('preview-overlay');
+    overlay.classList.remove('active');
+    document.body.classList.remove('overlay-open');
+    _previewWorkout = null;
   }
 
   function launchWorkout(workoutData) {
