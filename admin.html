@@ -510,6 +510,51 @@
   .img-upload-or { font-size: 11px; color: #B0A89E; font-weight: 600; }
   .img-upload-file { display: none; }
 
+  /* ===== OVERVIEW EXERCISES EDITOR ===== */
+  .overview-section {
+    margin-top: 16px; padding: 16px;
+    background: #F8F4EE; border-radius: 10px; border: 1.5px solid #E8E0D8;
+  }
+  .overview-section-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 12px; flex-wrap: wrap; gap: 8px;
+  }
+  .overview-section-actions { display: flex; gap: 8px; }
+  .overview-autofill-btn {
+    padding: 5px 10px; font-size: 11px; font-weight: 600;
+    background: #fff; border: 1.5px solid #D4CAC0; border-radius: 6px;
+    color: #8A8279; cursor: pointer; font-family: inherit; transition: all 0.2s;
+  }
+  .overview-autofill-btn:hover { border-color: #C07A5C; color: #C07A5C; }
+  .overview-add-btn {
+    padding: 5px 10px; font-size: 11px; font-weight: 700;
+    background: #C07A5C; border: none; border-radius: 6px;
+    color: #fff; cursor: pointer; font-family: inherit; transition: all 0.2s;
+  }
+  .overview-add-btn:hover { background: #A8674E; }
+  .overview-exercise-list { display: flex; flex-direction: column; gap: 6px; }
+  .overview-row {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 10px; background: #fff; border-radius: 8px;
+    border: 1px solid #E8E0D8;
+  }
+  .overview-row .form-input.short { max-width: 50px; padding: 6px 8px; font-size: 16px; text-align: center; }
+  .overview-name-input { flex: 1; padding: 6px 10px !important; font-size: 13px !important; }
+  .overview-dur-input { width: 65px !important; max-width: 65px; padding: 6px 8px !important; font-size: 13px !important; text-align: center; }
+  .overview-dur-label { font-size: 11px; color: #B0A89E; font-weight: 500; flex-shrink: 0; }
+  .overview-remove-btn {
+    width: 28px; height: 28px; border-radius: 6px;
+    background: none; border: 1px solid #E8E0D8;
+    color: #C07A5C; font-size: 16px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: all 0.2s;
+  }
+  .overview-remove-btn:hover { background: #C07A5C; color: #fff; border-color: #C07A5C; }
+  .overview-empty {
+    padding: 16px; text-align: center; font-size: 13px;
+    color: #B0A89E; font-style: italic;
+  }
+
   /* ===== RESPONSIVE ===== */
   @media (max-width: 500px) {
     .form-row { grid-template-columns: 1fr; }
@@ -597,36 +642,36 @@ var _adminSession = null;
 // ===== DEFAULT DATA (mirrors dashboard.html) =====
 var DEFAULTS = {
   schedule: [
-    { title: 'Morning Yoga Flow', emoji: '🧘', duration: 15, difficulty: 'Beginner', diffColor: '#22c55e', category: 'yoga', desc: 'Gentle stretching and breathing exercises designed for flexibility and calm. Perfect start to your day.', cal: 85, imageUrl: '' },
-    { title: 'Walking Power Stroll', emoji: '🚶', duration: 20, difficulty: 'Beginner', diffColor: '#22c55e', category: 'walking', desc: 'Brisk walk with intervals of faster pace. Focus on posture and arm movement for a full-body benefit.', cal: 120, imageUrl: '' },
-    { title: 'Chair Strength Circuit', emoji: '🪑', duration: 12, difficulty: 'Beginner', diffColor: '#22c55e', category: 'chair', desc: 'Seated and standing exercises using a sturdy chair for support. Great for building strength safely.', cal: 75, imageUrl: '' },
-    { title: 'Rest & Recovery', emoji: '😌', duration: 10, difficulty: 'Easy', diffColor: '#3b82f6', category: 'stretching', desc: 'Light stretching and deep breathing. Let your body recover and rebuild. Active rest is important!', cal: 30, isRest: true, imageUrl: '' },
-    { title: 'Low-Impact Cardio', emoji: '❤️', duration: 20, difficulty: 'Moderate', diffColor: '#f59e0b', category: 'cardio', desc: 'Marching in place, side steps, and gentle movements that get your heart rate up without jarring your joints.', cal: 140, imageUrl: '' },
-    { title: 'Gentle Pilates Core', emoji: '🏋️', duration: 15, difficulty: 'Beginner', diffColor: '#22c55e', category: 'pilates', desc: 'Core-strengthening moves adapted for beginners. Focus on breathing and controlled movements.', cal: 95, imageUrl: '' },
-    { title: 'Full Body Stretch', emoji: '🤸', duration: 10, difficulty: 'Easy', diffColor: '#3b82f6', category: 'stretching', desc: 'Head-to-toe stretching routine to improve flexibility and reduce stiffness. A perfect wind-down.', cal: 40, imageUrl: '' }
+    { title: 'Morning Yoga Flow', emoji: '🧘', duration: 15, difficulty: 'Beginner', diffColor: '#22c55e', category: 'yoga', desc: 'Gentle stretching and breathing exercises designed for flexibility and calm. Perfect start to your day.', cal: 85, imageUrl: '', overviewExercises: [] },
+    { title: 'Walking Power Stroll', emoji: '🚶', duration: 20, difficulty: 'Beginner', diffColor: '#22c55e', category: 'walking', desc: 'Brisk walk with intervals of faster pace. Focus on posture and arm movement for a full-body benefit.', cal: 120, imageUrl: '', overviewExercises: [] },
+    { title: 'Chair Strength Circuit', emoji: '🪑', duration: 12, difficulty: 'Beginner', diffColor: '#22c55e', category: 'chair', desc: 'Seated and standing exercises using a sturdy chair for support. Great for building strength safely.', cal: 75, imageUrl: '', overviewExercises: [] },
+    { title: 'Rest & Recovery', emoji: '😌', duration: 10, difficulty: 'Easy', diffColor: '#3b82f6', category: 'stretching', desc: 'Light stretching and deep breathing. Let your body recover and rebuild. Active rest is important!', cal: 30, isRest: true, imageUrl: '', overviewExercises: [] },
+    { title: 'Low-Impact Cardio', emoji: '❤️', duration: 20, difficulty: 'Moderate', diffColor: '#f59e0b', category: 'cardio', desc: 'Marching in place, side steps, and gentle movements that get your heart rate up without jarring your joints.', cal: 140, imageUrl: '', overviewExercises: [] },
+    { title: 'Gentle Pilates Core', emoji: '🏋️', duration: 15, difficulty: 'Beginner', diffColor: '#22c55e', category: 'pilates', desc: 'Core-strengthening moves adapted for beginners. Focus on breathing and controlled movements.', cal: 95, imageUrl: '', overviewExercises: [] },
+    { title: 'Full Body Stretch', emoji: '🤸', duration: 10, difficulty: 'Easy', diffColor: '#3b82f6', category: 'stretching', desc: 'Head-to-toe stretching routine to improve flexibility and reduce stiffness. A perfect wind-down.', cal: 40, imageUrl: '', overviewExercises: [] }
   ],
   library: [
-    { title: 'Morning Yoga Flow', emoji: '🧘', duration: 15, difficulty: 'Beginner', category: 'yoga', imageUrl: '' },
-    { title: 'Yoga for Flexibility', emoji: '🧘', duration: 20, difficulty: 'Beginner', category: 'yoga', imageUrl: '' },
-    { title: 'Calming Yoga Session', emoji: '🧘', duration: 25, difficulty: 'Moderate', category: 'yoga', imageUrl: '' },
-    { title: 'Chair Yoga', emoji: '🧘', duration: 10, difficulty: 'Easy', category: 'yoga', imageUrl: '' },
-    { title: 'Walking Power Stroll', emoji: '🚶', duration: 20, difficulty: 'Beginner', category: 'walking', imageUrl: '' },
-    { title: 'Interval Walking', emoji: '🚶', duration: 30, difficulty: 'Moderate', category: 'walking', imageUrl: '' },
-    { title: 'Morning Walk', emoji: '🚶', duration: 15, difficulty: 'Easy', category: 'walking', imageUrl: '' },
-    { title: 'Walking & Stretching', emoji: '🚶', duration: 25, difficulty: 'Beginner', category: 'walking', imageUrl: '' },
-    { title: 'Full Body Stretch', emoji: '🤸', duration: 10, difficulty: 'Easy', category: 'stretching', imageUrl: '' },
-    { title: 'Morning Stretch', emoji: '🤸', duration: 8, difficulty: 'Easy', category: 'stretching', imageUrl: '' },
-    { title: 'Deep Stretch Session', emoji: '🤸', duration: 20, difficulty: 'Beginner', category: 'stretching', imageUrl: '' },
-    { title: 'Hip & Back Release', emoji: '🤸', duration: 15, difficulty: 'Beginner', category: 'stretching', imageUrl: '' },
-    { title: 'Low-Impact Cardio', emoji: '❤️', duration: 20, difficulty: 'Moderate', category: 'cardio', imageUrl: '' },
-    { title: 'Dance Fitness Light', emoji: '❤️', duration: 15, difficulty: 'Beginner', category: 'cardio', imageUrl: '' },
-    { title: 'Step & Groove', emoji: '❤️', duration: 25, difficulty: 'Moderate', category: 'cardio', imageUrl: '' },
-    { title: 'Chair Strength Circuit', emoji: '🪑', duration: 12, difficulty: 'Beginner', category: 'chair', imageUrl: '' },
-    { title: 'Seated Core Workout', emoji: '🪑', duration: 10, difficulty: 'Beginner', category: 'chair', imageUrl: '' },
-    { title: 'Chair Cardio', emoji: '🪑', duration: 15, difficulty: 'Moderate', category: 'chair', imageUrl: '' },
-    { title: 'Gentle Pilates Core', emoji: '🏋️', duration: 15, difficulty: 'Beginner', category: 'pilates', imageUrl: '' },
-    { title: 'Pilates for Beginners', emoji: '🏋️', duration: 20, difficulty: 'Beginner', category: 'pilates', imageUrl: '' },
-    { title: 'Pilates Balance Work', emoji: '🏋️', duration: 18, difficulty: 'Moderate', category: 'pilates', imageUrl: '' }
+    { title: 'Morning Yoga Flow', emoji: '🧘', duration: 15, difficulty: 'Beginner', category: 'yoga', imageUrl: '', overviewExercises: [] },
+    { title: 'Yoga for Flexibility', emoji: '🧘', duration: 20, difficulty: 'Beginner', category: 'yoga', imageUrl: '', overviewExercises: [] },
+    { title: 'Calming Yoga Session', emoji: '🧘', duration: 25, difficulty: 'Moderate', category: 'yoga', imageUrl: '', overviewExercises: [] },
+    { title: 'Chair Yoga', emoji: '🧘', duration: 10, difficulty: 'Easy', category: 'yoga', imageUrl: '', overviewExercises: [] },
+    { title: 'Walking Power Stroll', emoji: '🚶', duration: 20, difficulty: 'Beginner', category: 'walking', imageUrl: '', overviewExercises: [] },
+    { title: 'Interval Walking', emoji: '🚶', duration: 30, difficulty: 'Moderate', category: 'walking', imageUrl: '', overviewExercises: [] },
+    { title: 'Morning Walk', emoji: '🚶', duration: 15, difficulty: 'Easy', category: 'walking', imageUrl: '', overviewExercises: [] },
+    { title: 'Walking & Stretching', emoji: '🚶', duration: 25, difficulty: 'Beginner', category: 'walking', imageUrl: '', overviewExercises: [] },
+    { title: 'Full Body Stretch', emoji: '🤸', duration: 10, difficulty: 'Easy', category: 'stretching', imageUrl: '', overviewExercises: [] },
+    { title: 'Morning Stretch', emoji: '🤸', duration: 8, difficulty: 'Easy', category: 'stretching', imageUrl: '', overviewExercises: [] },
+    { title: 'Deep Stretch Session', emoji: '🤸', duration: 20, difficulty: 'Beginner', category: 'stretching', imageUrl: '', overviewExercises: [] },
+    { title: 'Hip & Back Release', emoji: '🤸', duration: 15, difficulty: 'Beginner', category: 'stretching', imageUrl: '', overviewExercises: [] },
+    { title: 'Low-Impact Cardio', emoji: '❤️', duration: 20, difficulty: 'Moderate', category: 'cardio', imageUrl: '', overviewExercises: [] },
+    { title: 'Dance Fitness Light', emoji: '❤️', duration: 15, difficulty: 'Beginner', category: 'cardio', imageUrl: '', overviewExercises: [] },
+    { title: 'Step & Groove', emoji: '❤️', duration: 25, difficulty: 'Moderate', category: 'cardio', imageUrl: '', overviewExercises: [] },
+    { title: 'Chair Strength Circuit', emoji: '🪑', duration: 12, difficulty: 'Beginner', category: 'chair', imageUrl: '', overviewExercises: [] },
+    { title: 'Seated Core Workout', emoji: '🪑', duration: 10, difficulty: 'Beginner', category: 'chair', imageUrl: '', overviewExercises: [] },
+    { title: 'Chair Cardio', emoji: '🪑', duration: 15, difficulty: 'Moderate', category: 'chair', imageUrl: '', overviewExercises: [] },
+    { title: 'Gentle Pilates Core', emoji: '🏋️', duration: 15, difficulty: 'Beginner', category: 'pilates', imageUrl: '', overviewExercises: [] },
+    { title: 'Pilates for Beginners', emoji: '🏋️', duration: 20, difficulty: 'Beginner', category: 'pilates', imageUrl: '', overviewExercises: [] },
+    { title: 'Pilates Balance Work', emoji: '🏋️', duration: 18, difficulty: 'Moderate', category: 'pilates', imageUrl: '', overviewExercises: [] }
   ],
   exerciseDb: {
     yoga: [
@@ -823,6 +868,18 @@ function renderSchedule() {
     html += '</div>';
     html += '</div>';
     html += '</div>';
+    html += '<div class="overview-section">';
+    html += '<div class="overview-section-header">';
+    html += '<label class="form-label" style="margin:0">OVERVIEW EXERCISES</label>';
+    html += '<div class="overview-section-actions">';
+    html += '<button type="button" class="overview-autofill-btn" onclick="autoFillSchedOverview(' + i + ')">Auto-fill from Category</button>';
+    html += '<button type="button" class="overview-add-btn" onclick="addSchedOverviewEx(' + i + ')">+ Add</button>';
+    html += '</div>';
+    html += '</div>';
+    html += '<div class="overview-exercise-list" id="sched-overview-' + i + '">';
+    html += renderOverviewRows('sched', i, w.overviewExercises || []);
+    html += '</div>';
+    html += '</div>';
     html += '<div class="form-row full">';
     html += '<div class="form-group"><label class="form-label">Description</label><textarea class="form-textarea" data-sched="' + i + '" data-field="desc" onchange="updateScheduleField(this)">' + escHtml(w.desc) + '</textarea></div>';
     html += '</div>';
@@ -885,6 +942,18 @@ function renderLibrary() {
     html += '<input class="form-input" data-lib="' + i + '" data-field="videoUrl" value="' + escHtml(w.videoUrl || '') + '" placeholder="Cloudinary / MP4 / YouTube URL" onchange="updateLibraryField(this)" oninput="validateLibVideoInput(this,' + i + ')">';
     html += '<span class="video-url-status" id="lib-vid-status-' + i + '">' + videoStatusIcon(w.videoUrl || '') + '</span>';
     html += '</div></div>';
+    html += '</div>';
+    html += '<div class="overview-section">';
+    html += '<div class="overview-section-header">';
+    html += '<label class="form-label" style="margin:0">OVERVIEW EXERCISES</label>';
+    html += '<div class="overview-section-actions">';
+    html += '<button type="button" class="overview-autofill-btn" onclick="autoFillLibOverview(' + i + ')">Auto-fill from Category</button>';
+    html += '<button type="button" class="overview-add-btn" onclick="addLibOverviewEx(' + i + ')">+ Add</button>';
+    html += '</div>';
+    html += '</div>';
+    html += '<div class="overview-exercise-list" id="lib-overview-' + i + '">';
+    html += renderOverviewRows('lib', i, w.overviewExercises || []);
+    html += '</div>';
     html += '</div>';
     html += '</div>';
   });
@@ -1039,7 +1108,7 @@ async function uploadSchedThumbnail(idx, fileInput) {
 }
 
 function addLibraryItem() {
-  currentData.library.push({ title: 'New Workout', emoji: '💪', duration: 15, difficulty: 'Beginner', category: 'yoga', videoUrl: '', imageUrl: '' });
+  currentData.library.push({ title: 'New Workout', emoji: '💪', duration: 15, difficulty: 'Beginner', category: 'yoga', videoUrl: '', imageUrl: '', overviewExercises: [] });
   renderLibrary();
   showToast('Workout added');
 }
@@ -1050,6 +1119,80 @@ function removeLibraryItem(idx) {
     renderLibrary();
   }
 }
+
+// ===== OVERVIEW EXERCISES EDITOR =====
+function renderOverviewRows(type, parentIdx, exercises) {
+  if (!exercises || !exercises.length) return '<div class="overview-empty">No exercises yet. Click "Auto-fill" or "+ Add" to get started.</div>';
+  var html = '';
+  exercises.forEach(function(ex, i) {
+    html += '<div class="overview-row">';
+    html += '<input class="form-input short" data-type="' + type + '" data-parent="' + parentIdx + '" data-oidx="' + i + '" data-ofield="emoji" value="' + escHtml(ex.emoji || '💪') + '" onchange="updateOverviewField(this)" title="Emoji">';
+    html += '<input class="form-input overview-name-input" data-type="' + type + '" data-parent="' + parentIdx + '" data-oidx="' + i + '" data-ofield="name" value="' + escHtml(ex.name) + '" onchange="updateOverviewField(this)" placeholder="Exercise name">';
+    html += '<input class="form-input overview-dur-input" type="number" min="1" data-type="' + type + '" data-parent="' + parentIdx + '" data-oidx="' + i + '" data-ofield="duration" value="' + (ex.duration || 30) + '" onchange="updateOverviewField(this)" title="Duration (sec)">';
+    html += '<span class="overview-dur-label">sec</span>';
+    html += '<button type="button" class="overview-remove-btn" onclick="removeOverviewEx(\'' + type + '\',' + parentIdx + ',' + i + ')">&times;</button>';
+    html += '</div>';
+  });
+  return html;
+}
+
+function updateOverviewField(el) {
+  var type = el.getAttribute('data-type');
+  var parentIdx = parseInt(el.getAttribute('data-parent'));
+  var exIdx = parseInt(el.getAttribute('data-oidx'));
+  var field = el.getAttribute('data-ofield');
+  var list = type === 'sched' ? currentData.schedule : currentData.library;
+  if (!list[parentIdx].overviewExercises) list[parentIdx].overviewExercises = [];
+  if (field === 'duration') {
+    list[parentIdx].overviewExercises[exIdx][field] = parseInt(el.value) || 30;
+  } else {
+    list[parentIdx].overviewExercises[exIdx][field] = el.value;
+  }
+}
+
+function addOverviewEx(type, parentIdx) {
+  var list = type === 'sched' ? currentData.schedule : currentData.library;
+  if (!list[parentIdx].overviewExercises) list[parentIdx].overviewExercises = [];
+  list[parentIdx].overviewExercises.push({ name: 'New Exercise', emoji: '💪', duration: 30 });
+  refreshOverviewList(type, parentIdx);
+}
+
+function removeOverviewEx(type, parentIdx, exIdx) {
+  var list = type === 'sched' ? currentData.schedule : currentData.library;
+  list[parentIdx].overviewExercises.splice(exIdx, 1);
+  refreshOverviewList(type, parentIdx);
+}
+
+function refreshOverviewList(type, parentIdx) {
+  var list = type === 'sched' ? currentData.schedule : currentData.library;
+  var container = document.getElementById(type + '-overview-' + parentIdx);
+  if (container) {
+    container.innerHTML = renderOverviewRows(type, parentIdx, list[parentIdx].overviewExercises || []);
+  }
+}
+
+function autoFillOverview(type, parentIdx) {
+  var list = type === 'sched' ? currentData.schedule : currentData.library;
+  var workout = list[parentIdx];
+  var cat = workout.category;
+  var dbExercises = currentData.exerciseDb[cat] || [];
+  if (!dbExercises.length) {
+    showToast('No exercises found for category: ' + cat);
+    return;
+  }
+  var totalSec = (workout.duration || 15) * 60;
+  var secPer = Math.round(totalSec / dbExercises.length);
+  workout.overviewExercises = dbExercises.map(function(ex) {
+    return { name: ex.name, emoji: ex.emoji, duration: secPer };
+  });
+  refreshOverviewList(type, parentIdx);
+  showToast('Filled ' + dbExercises.length + ' exercises from ' + cat);
+}
+
+function addSchedOverviewEx(idx) { addOverviewEx('sched', idx); }
+function addLibOverviewEx(idx) { addOverviewEx('lib', idx); }
+function autoFillSchedOverview(idx) { autoFillOverview('sched', idx); }
+function autoFillLibOverview(idx) { autoFillOverview('lib', idx); }
 
 // ===== RENDER EXERCISES =====
 function renderCategoryChips() {

@@ -2226,10 +2226,20 @@
     titleEl.textContent = workoutData.title;
     subtitleEl.textContent = workoutData.desc || (escHtml(workoutData.difficulty) + ' · ' + escHtml(workoutData.category));
 
+    // Check for custom overview exercises
+    var hasCustomOverview = workoutData.overviewExercises && workoutData.overviewExercises.length > 0;
+
     // Stats
-    var exerciseCount = isVideoWorkout ? 1 : seq.exercises.length;
-    var dbExercises = EXERCISE_DB[workoutData.category] || [];
-    var uniqueCount = isVideoWorkout ? 1 : Math.min(exerciseCount, dbExercises.length);
+    var exerciseCount, uniqueCount;
+    if (hasCustomOverview) {
+      uniqueCount = workoutData.overviewExercises.length;
+    } else if (isVideoWorkout) {
+      uniqueCount = 1;
+    } else {
+      exerciseCount = seq.exercises.length;
+      var dbExercises = EXERCISE_DB[workoutData.category] || [];
+      uniqueCount = Math.min(exerciseCount, dbExercises.length);
+    }
     statsEl.innerHTML =
       '<div class="preview-stat"><div class="preview-stat-value">' + parseInt(workoutData.duration) + '</div><div class="preview-stat-label">Minutes</div></div>' +
       '<div class="preview-stat"><div class="preview-stat-value">' + calories + '</div><div class="preview-stat-label">Calories</div></div>' +
@@ -2237,14 +2247,25 @@
 
     // Exercise list
     var listHtml = '';
-    if (isVideoWorkout) {
+    if (hasCustomOverview) {
+      // Custom overview from admin panel
+      workoutData.overviewExercises.forEach(function(ex) {
+        var durSec = ex.duration || 30;
+        var durStr = Math.floor(durSec / 60) + ':' + ('0' + (durSec % 60)).slice(-2);
+        listHtml += '<div class="preview-exercise-row">' +
+          '<div class="preview-exercise-emoji">' + escHtml(ex.emoji || '💪') + '</div>' +
+          '<div class="preview-exercise-name">' + escHtml(ex.name) + '</div>' +
+          '<div class="preview-exercise-dur">' + durStr + '</div>' +
+          '</div>';
+      });
+    } else if (isVideoWorkout) {
       listHtml += '<div class="preview-exercise-row">' +
         '<div class="preview-exercise-emoji">' + escHtml(workoutData.emoji || '🎬') + '</div>' +
         '<div class="preview-exercise-name">' + escHtml(workoutData.title) + '</div>' +
         '<div class="preview-exercise-dur">' + parseInt(workoutData.duration) + ':00</div>' +
         '</div>';
     } else {
-      // Show unique exercises (one pass through the DB)
+      // Auto-generate from exercise database
       var shown = {};
       seq.exercises.forEach(function(ex) {
         if (!shown[ex.name]) {
