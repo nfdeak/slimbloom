@@ -876,7 +876,6 @@
         <span>Doctor recommended weight loss</span>
       </div>
     </div>
-    <button class="continue-btn" id="continue-6" disabled onclick="goToStep(7)">CONTINUE</button>
   </div>
 
   <!-- ========== STEP 7: Target Zones (Multi-Select) ========== -->
@@ -1446,8 +1445,13 @@
     const parent = el.closest('.step');
     parent.querySelectorAll('.radio-card').forEach(c => c.classList.remove('selected'));
     el.classList.add('selected');
+    // Auto-advance for single-select radio steps (no continue button)
     const btn = document.getElementById(`continue-${step}`);
-    if (btn) btn.disabled = false;
+    if (!btn) {
+      setTimeout(function(){ goToStep(step + 1); }, 350);
+      return;
+    }
+    btn.disabled = false;
   }
 
   function toggleZone(el) {
