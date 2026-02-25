@@ -321,9 +321,8 @@
       display: flex; align-items: center; justify-content: center;
       flex-wrap: wrap; gap: 6px; margin-top: 14px;
     }
-    .payment-cards img {
-      height: 26px; border-radius: 4px;
-      border: 1px solid #E8E0D8;
+    .payment-cards svg {
+      height: 24px; width: auto;
     }
     .guarantee-link {
       text-align: center; margin-top: 12px;
@@ -903,15 +902,15 @@
     <button class="cta-btn" id="ctaBtn" onclick="handleGetPlan()">GET MY PLAN</button>
 
     <div class="payment-cards">
-      <img src="https://cdn.shopify.com/shopifycloud/checkout-web/assets/0169695890db3db16bfe.svg" alt="Amex">
-      <img src="https://cdn.shopify.com/shopifycloud/checkout-web/assets/ae42a2e60c7e82298baa.svg" alt="Apple Pay">
-      <img src="https://cdn.shopify.com/shopifycloud/checkout-web/assets/dc0dcb8d39725e5b0759.svg" alt="Diners Club">
-      <img src="https://cdn.shopify.com/shopifycloud/checkout-web/assets/f11b90c2972f3811f2d5.svg" alt="Discover">
-      <img src="https://cdn.shopify.com/shopifycloud/checkout-web/assets/d8bcca0a36db1567f4ca.svg" alt="Google Pay">
-      <img src="https://cdn.shopify.com/shopifycloud/checkout-web/assets/36950a2421e516dc9f38.svg" alt="Mastercard">
-      <img src="https://cdn.shopify.com/shopifycloud/checkout-web/assets/0c3151b78b2e8650b055.svg" alt="PayPal">
-      <img src="https://cdn.shopify.com/shopifycloud/checkout-web/assets/5e3b05b68f3d31b87e84.svg" alt="Shop Pay">
-      <img src="https://cdn.shopify.com/shopifycloud/checkout-web/assets/35e6b97daff15ef7758b.svg" alt="Visa">
+      <svg viewBox="0 0 38 24" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Visa"><rect width="38" height="24" rx="3" fill="#fff" stroke="#E8E0D8"/><path d="M15.764 16.23h-2.39l1.496-9.216h2.39l-1.496 9.216zm9.14-8.994a5.89 5.89 0 00-2.136-.391c-2.352 0-4.01 1.253-4.024 3.047-.014 1.326 1.184 2.065 2.088 2.507.926.452 1.238.74 1.234 1.144-.006.618-.74.9-1.424.9-.952 0-1.458-.14-2.24-.484l-.306-.147-.334 2.06c.556.257 1.584.48 2.652.492 2.502 0 4.13-1.236 4.148-3.154.01-1.052-.626-1.852-2-2.51-.832-.428-1.342-.712-1.336-1.146 0-.384.43-.795 1.362-.795a4.12 4.12 0 011.776.352l.214.106.322-1.982zM28.632 7.014h-1.84c-.57 0-.996.164-1.246.764l-3.534 8.452h2.5l.498-1.38h3.054l.29 1.38h2.206l-1.928-9.216zm-2.94 5.936c.198-.534 .954-2.588.954-2.588-.014.024.196-.536.318-.884l.162.798s.458 2.21.554 2.674h-1.988zM12.288 7.014l-2.332 6.282-.248-1.282c-.434-1.472-1.786-3.066-3.298-3.864l2.132 8.07h2.52l3.748-9.206h-2.522z" fill="#1A1F71"/><path d="M7.86 7.014H4.026L4 7.19c2.988.764 4.966 2.608 5.784 4.826l-.836-4.24c-.144-.582-.562-.748-1.088-.762z" fill="#F7A600"/></svg>
+      <svg viewBox="0 0 38 24" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Mastercard"><rect width="38" height="24" rx="3" fill="#fff" stroke="#E8E0D8"/><circle cx="15" cy="12" r="7" fill="#EB001B"/><circle cx="23" cy="12" r="7" fill="#F79E1B"/><path d="M19 6.6a7 7 0 012.6 5.4 7 7 0 01-2.6 5.4A7 7 0 0116.4 12 7 7 0 0119 6.6z" fill="#FF5F00"/></svg>
+      <svg viewBox="0 0 38 24" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Amex"><rect width="38" height="24" rx="3" fill="#26A6D1"/><text x="19" y="15.5" text-anchor="middle" fill="#fff" font-family="Inter,Arial,sans-serif" font-size="7" font-weight="700">AMEX</text></svg>
+      <svg viewBox="0 0 38 24" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Apple Pay"><rect width="38" height="24" rx="3" fill="#000"/><text x="19" y="14.5" text-anchor="middle" fill="#fff" font-family="Inter,Arial,sans-serif" font-size="7.5" font-weight="600"> Pay</text></svg>
+      <svg viewBox="0 0 38 24" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Google Pay"><rect width="38" height="24" rx="3" fill="#fff" stroke="#E8E0D8"/><text x="19" y="14.5" text-anchor="middle" fill="#5F6368" font-family="Inter,Arial,sans-serif" font-size="7" font-weight="500">GPay</text></svg>
+      <svg viewBox="0 0 38 24" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="PayPal"><rect width="38" height="24" rx="3" fill="#fff" stroke="#E8E0D8"/><text x="19" y="14.5" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="7" font-weight="700"><tspan fill="#003087">Pay</tspan><tspan fill="#009CDE">Pal</tspan></text></svg>
+      <svg viewBox="0 0 38 24" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Discover"><rect width="38" height="24" rx="3" fill="#fff" stroke="#E8E0D8"/><text x="19" y="14.5" text-anchor="middle" fill="#FF6600" font-family="Inter,Arial,sans-serif" font-size="6.5" font-weight="700">DISCOVER</text></svg>
+      <svg viewBox="0 0 38 24" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Diners Club"><rect width="38" height="24" rx="3" fill="#fff" stroke="#E8E0D8"/><text x="19" y="14.5" text-anchor="middle" fill="#0D4C92" font-family="Inter,Arial,sans-serif" font-size="5.5" font-weight="600">DINERS</text></svg>
+      <svg viewBox="0 0 38 24" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Shop Pay"><rect width="38" height="24" rx="3" fill="#5A31F4"/><text x="19" y="14.5" text-anchor="middle" fill="#fff" font-family="Inter,Arial,sans-serif" font-size="6.5" font-weight="700">Shop Pay</text></svg>
     </div>
   </section>
 
