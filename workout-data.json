@@ -168,12 +168,13 @@
       ]
     },
     {
-      "title": "Yoga for Flexibility",
+      "title": "Water Bottle Seated Cardio",
       "emoji": "🧘",
       "duration": 20,
       "difficulty": "Beginner",
       "category": "yoga",
-      "videoUrl": "https://youtu.be/2IcWJobNDck?si=BMgvqABT6P06UaKr"
+      "videoUrl": "https://youtu.be/2IcWJobNDck?si=BMgvqABT6P06UaKr",
+      "imageUrl": "https://res.cloudinary.com/drco9qzzk/video/upload/v1772223446/Screen_Recording_2026-02-27_at_3.16.14_PM_zxl6jz.mov"
     },
     {
       "title": "Chair Yoga Session",
