@@ -200,12 +200,12 @@
       "videoUrl": "https://res.cloudinary.com/drco9qzzk/video/upload/v1772029222/hf_20260225_111027_809f79c0-810f-4b63-b6ec-5407bb29c55c_wofcyj.mp4"
     },
     {
-      "title": "Interval Walking",
+      "title": "Interval Walking 11",
       "emoji": "🚶",
       "duration": 30,
       "difficulty": "Moderate",
       "category": "walking",
-      "videoUrl": ""
+      "videoUrl": "https://res.cloudinary.com/drco9qzzk/video/upload/v1772207664/hf_20260227_152705_8a6b7cfa-8e85-4b39-81f3-61ea59b2f6ca_udvoul.mp4"
     },
     {
       "title": "Morning Walk",
@@ -221,7 +221,8 @@
       "duration": 25,
       "difficulty": "Beginner",
       "category": "walking",
-      "videoUrl": ""
+      "videoUrl": "",
+      "imageUrl": "https://res.cloudinary.com/drco9qzzk/video/upload/v1772207664/hf_20260227_152705_8a6b7cfa-8e85-4b39-81f3-61ea59b2f6ca_udvoul.mp4"
     },
     {
       "title": "Full Body Stretch",
