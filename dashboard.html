@@ -475,7 +475,8 @@
     overflow: hidden;
     position: relative;
   }
-  .workout-lib-thumb img {
+  .workout-lib-thumb img,
+  .workout-lib-thumb video {
     width: 100%; height: 100%;
     object-fit: cover;
     position: absolute; top: 0; left: 0;
@@ -1848,10 +1849,24 @@
     return d.innerHTML;
   }
 
-  // Convert Cloudinary video URLs to optimized thumbnail JPEGs
+  // Check if a URL is a video file
+  function isVideoUrl(url) {
+    if (!url) return false;
+    return /\.(mp4|mov|webm|m3u8)(\?|$)/i.test(url) || /res\.cloudinary\.com\/.*\/video\/upload\//i.test(url);
+  }
+
+  // Optimize Cloudinary video for thumbnail preview (small, compressed)
+  function thumbVideoUrl(url) {
+    if (!url) return url;
+    if (/res\.cloudinary\.com\/.*\/video\/upload\//i.test(url)) {
+      return url.replace(/\/video\/upload\//, '/video/upload/w_400,q_auto:low,f_mp4/');
+    }
+    return url;
+  }
+
+  // Convert Cloudinary video URLs to optimized thumbnail JPEGs (fallback for non-video contexts)
   function thumbUrl(url) {
     if (!url) return url;
-    // Cloudinary video → grab first frame as compressed 400px wide JPEG
     if (/res\.cloudinary\.com\/.*\/video\/upload\//i.test(url)) {
       return url.replace(/\/video\/upload\/(?:v\d+\/)?/, function(match) {
         return match.replace('/upload/', '/upload/f_jpg,w_400,q_auto,so_0/');
@@ -2108,7 +2123,14 @@
     list.forEach(function(w) {
       var card = document.createElement('div');
       card.className = 'workout-lib-card';
-      var thumbContent = w.imageUrl ? '<img src="' + escHtml(thumbUrl(w.imageUrl)) + '" alt="' + escHtml(w.title) + '" loading="lazy" onerror="this.remove();this.parentElement.textContent=\'' + escHtml(w.emoji).replace(/'/g, '\\&#39;') + '\'">' : escHtml(w.emoji);
+      var thumbContent;
+      if (w.imageUrl && isVideoUrl(w.imageUrl)) {
+        thumbContent = '<video src="' + escHtml(thumbVideoUrl(w.imageUrl)) + '" autoplay loop muted playsinline webkit-playsinline preload="metadata"></video>';
+      } else if (w.imageUrl) {
+        thumbContent = '<img src="' + escHtml(w.imageUrl) + '" alt="' + escHtml(w.title) + '" loading="lazy" onerror="this.remove();this.parentElement.textContent=\'' + escHtml(w.emoji).replace(/'/g, '\\&#39;') + '\'">';
+      } else {
+        thumbContent = escHtml(w.emoji);
+      }
       card.innerHTML =
         '<div class="workout-lib-thumb">' + thumbContent + '</div>' +
         '<div class="workout-lib-body">' +
