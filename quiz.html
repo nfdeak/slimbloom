@@ -668,6 +668,13 @@
     justify-content: center;
     font-size: 48px;
     background: linear-gradient(135deg, #F5EEE6, #FDF0E8);
+    overflow: hidden;
+    position: relative;
+  }
+  .age-card-img img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    position: absolute; top: 0; left: 0;
   }
   .age-card-btn {
     display: block;
@@ -825,7 +832,7 @@
       <p class="landing-subtitle">Select your age group</p>
       <div class="age-grid">
         <div class="age-card" onclick="selectAndAdvance(1, '45-54')">
-          <div class="age-card-img">&#128105;&#8205;&#129309;</div>
+          <div class="age-card-img"><img src="https://res.cloudinary.com/drco9qzzk/image/upload/w_400,q_auto,f_auto/v1772225756/hf_20260227_204808_5ad84f83-9ae4-4311-9656-2b1658e32b62_dhvn89.jpg" alt="45-54"></div>
           <button class="age-card-btn">45-54 <span>&#10095;</span></button>
         </div>
         <div class="age-card" onclick="selectAndAdvance(1, '55-64')">
