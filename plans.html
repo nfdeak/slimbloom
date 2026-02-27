@@ -73,11 +73,10 @@
     }
     @media (hover: hover) { .nav-cta:hover { background: #a8654a; } }
 
-    /* Stack nav buttons on iPhone 15 Pro (393px) and smaller */
+    /* Nav buttons below logo on iPhone 15 Pro (393px) and smaller */
     @media (max-width: 393px) {
-      .nav { flex-wrap: wrap; justify-content: center; gap: 10px; }
-      .nav-right { width: 100%; flex-direction: column; }
-      .nav-cta, .nav-login { width: 100%; text-align: center; box-sizing: border-box; }
+      .nav { flex-wrap: wrap; justify-content: center; gap: 8px; }
+      .nav-right { width: 100%; justify-content: center; }
     }
 
     /* ===== LOGIN MODAL ===== */
