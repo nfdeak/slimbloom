@@ -175,35 +175,49 @@
     width: 100%;
     max-width: 500px;
     z-index: 100;
-    background: rgba(250, 246, 241, 0.95);
+    background: rgba(250, 246, 241, 0.97);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border-top: 1px solid #E8E0D8;
     display: flex;
     justify-content: space-around;
-    padding: 6px 0 env(safe-area-inset-bottom, 6px);
+    padding: 6px 8px env(safe-area-inset-bottom, 6px);
   }
   .nav-tab {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 3px;
-    padding: 8px 20px;
+    padding: 8px 0;
     cursor: pointer;
     background: none;
     border: none;
     font-family: inherit;
-    transition: all 0.2s;
+    flex: 1;
+    position: relative;
+    z-index: 1;
+    -webkit-tap-highlight-color: transparent;
   }
-  .nav-tab-icon { font-size: 22px; line-height: 1; transition: transform 0.2s; }
+  .nav-tab-icon { font-size: 22px; line-height: 1; transition: transform 0.25s ease; }
   .nav-tab-label {
     font-size: 10px;
     font-weight: 600;
     letter-spacing: 0.3px;
     color: #9B9590;
+    transition: color 0.25s ease;
   }
   .nav-tab.active .nav-tab-label { color: #C07A5C; }
   .nav-tab.active .nav-tab-icon { transform: scale(1.1); }
+  .nav-slider {
+    position: absolute;
+    top: 6px;
+    height: calc(100% - 6px - env(safe-area-inset-bottom, 6px));
+    background: #F3EDE7;
+    border-radius: 12px;
+    transition: left 0.3s cubic-bezier(0.25, 1, 0.5, 1), width 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+    z-index: 0;
+    pointer-events: none;
+  }
 
   /* ===== TAB PANELS ===== */
   .tab-panel {
@@ -1810,7 +1824,8 @@
 <div class="sp-toast" id="sp-toast"></div>
 
 <!-- Bottom Navigation -->
-<div class="bottom-nav">
+<div class="bottom-nav" id="bottom-nav">
+  <div class="nav-slider" id="nav-slider"></div>
   <button class="nav-tab active" data-tab="tab-plan">
     <span class="nav-tab-icon">📋</span>
     <span class="nav-tab-label">My Plan</span>
@@ -1954,19 +1969,35 @@
   }
 
   // ===== TAB SWITCHING =====
+  function moveSlider(tab) {
+    var slider = document.getElementById('nav-slider');
+    var nav = document.getElementById('bottom-nav');
+    if (!slider || !nav || !tab) return;
+    var navRect = nav.getBoundingClientRect();
+    var tabRect = tab.getBoundingClientRect();
+    slider.style.left = (tabRect.left - navRect.left) + 'px';
+    slider.style.width = tabRect.width + 'px';
+  }
+
   function switchTab(tabId) {
     document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
     document.querySelectorAll('.nav-tab').forEach(function(t) { t.classList.remove('active'); });
     var panel = document.getElementById(tabId);
     if (panel) panel.classList.add('active');
     var tab = document.querySelector('[data-tab="' + tabId + '"]');
-    if (tab) tab.classList.add('active');
+    if (tab) { tab.classList.add('active'); moveSlider(tab); }
     window.scrollTo(0, 0);
     triggerHaptic('light');
   }
 
   document.querySelectorAll('.nav-tab').forEach(function(tab) {
     tab.addEventListener('click', function() { switchTab(this.dataset.tab); });
+  });
+
+  // Position slider on initial active tab
+  requestAnimationFrame(function() {
+    var activeTab = document.querySelector('.nav-tab.active');
+    if (activeTab) moveSlider(activeTab);
   });
 
   // ===== WEEK STRIP =====
