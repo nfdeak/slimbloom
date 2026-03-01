@@ -3186,6 +3186,16 @@
       // Clean up URL
       window.history.replaceState({}, '', window.location.pathname);
       setTimeout(function() { showToast('Payment successful! Welcome to your plan!'); }, 500);
+      // Mark phone lead as converted (fire-and-forget)
+      var lwlPhone = sessionStorage.getItem('lwl_phone');
+      if (lwlPhone) {
+        _supabase.from('phone_leads')
+          .update({ converted: true, converted_at: new Date().toISOString() })
+          .eq('phone', lwlPhone)
+          .then(function() { console.log('Phone lead marked as converted'); })
+          .catch(function() {});
+        sessionStorage.removeItem('lwl_phone');
+      }
       // Fetch subscription data from backend (delay to allow webhook processing)
       setTimeout(function() {
         if (_currentSession) {

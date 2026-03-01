@@ -473,6 +473,15 @@
   @media (hover: hover) { .continue-btn:hover { background: #A8674E; } }
   .continue-btn:disabled { background: #E0D6CC; color: #A09891; cursor: not-allowed; }
 
+  /* Phone input step */
+  .phone-wrap { width: 100%; max-width: 400px; margin: 0 auto; }
+  .phone-input-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .phone-prefix { background: #F5EEE6; border: 1.5px solid #E0D6CC; border-radius: 10px; padding: 13px 14px; font-size: 15px; font-weight: 600; color: #2D2A26; white-space: nowrap; }
+  .phone-input { flex: 1; padding: 13px 16px; border: 1.5px solid #E0D6CC; border-radius: 10px; font-size: 15px; font-family: inherit; outline: none; transition: border-color 0.2s; background: #FAF6F1; letter-spacing: 0.5px; }
+  .phone-input:focus { border-color: #C07A5C; }
+  .phone-input.invalid { border-color: #ef4444; }
+  .phone-disclaimer { font-size: 12px; color: #B8AFA5; text-align: center; line-height: 1.5; margin-top: 16px; }
+
   /* Results/Summary Card */
   .results-card {
     width: 100%;
@@ -1375,8 +1384,22 @@
     </div>
   </div>
 
-  <!-- ========== STEP 34: Loading / Generating Plan ========== -->
+  <!-- ========== STEP 34: Phone Number ========== -->
   <div class="step" data-step="34" data-category="YOUR PLAN">
+    <h2>Almost there! Where should we send your plan?</h2>
+    <p class="subtitle">Enter your phone number to receive your personalized plan and tips</p>
+    <div class="phone-wrap">
+      <div class="phone-input-row">
+        <div class="phone-prefix">+1</div>
+        <input type="tel" class="phone-input" id="phone-input" placeholder="(555) 123-4567" maxlength="14" oninput="formatPhone(this)" onkeydown="if(event.key==='Enter'&&!document.getElementById('phone-continue').disabled)submitPhone()">
+      </div>
+      <div class="phone-disclaimer">By entering your number, you agree to receive SMS messages from Lazy Weight Loss. Message &amp; data rates may apply. Reply STOP to unsubscribe.</div>
+    </div>
+    <button class="continue-btn" id="phone-continue" disabled onclick="submitPhone()">CONTINUE</button>
+  </div>
+
+  <!-- ========== STEP 35: Loading / Generating Plan ========== -->
+  <div class="step" data-step="35" data-category="YOUR PLAN">
     <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 0;">
       <div style="font-size:64px;margin-bottom:20px;" id="loading-icon">&#9203;</div>
       <h2>Creating your personalized plan...</h2>
@@ -1390,8 +1413,8 @@
     </div>
   </div>
 
-  <!-- ========== STEP 35: Final Results / CTA ========== -->
-  <div class="step" data-step="35" data-category="YOUR PLAN">
+  <!-- ========== STEP 36: Final Results / CTA ========== -->
+  <div class="step" data-step="36" data-category="YOUR PLAN">
     <h2>Your plan is ready! &#127881;</h2>
     <p class="subtitle">Based on your answers, here's what we've prepared</p>
     <div class="results-card" style="text-align:center;">
@@ -1426,7 +1449,7 @@
 
 <script>
   let currentStep = 1;
-  const totalSteps = 35;
+  const totalSteps = 36;
   const answers = {};
 
   function goToStep(step) {
@@ -1439,8 +1462,8 @@
       currentStep = step;
       updateHeader();
 
-      // Trigger loading animation on step 34
-      if (step === 34) {
+      // Trigger loading animation on step 35
+      if (step === 35) {
         startLoadingAnimation();
       }
 
@@ -1623,6 +1646,38 @@
     window.location.href = '/plans';
   }
 
+  function formatPhone(el) {
+    var digits = el.value.replace(/\D/g, '').slice(0, 10);
+    var formatted = '';
+    if (digits.length > 0) formatted = '(' + digits.slice(0, 3);
+    if (digits.length >= 3) formatted += ') ';
+    if (digits.length > 3) formatted += digits.slice(3, 6);
+    if (digits.length >= 6) formatted += '-' + digits.slice(6);
+    el.value = formatted;
+    var btn = document.getElementById('phone-continue');
+    if (digits.length === 10) {
+      btn.disabled = false;
+      el.classList.remove('invalid');
+    } else {
+      btn.disabled = true;
+    }
+  }
+
+  function submitPhone() {
+    var el = document.getElementById('phone-input');
+    var digits = el.value.replace(/\D/g, '');
+    if (digits.length !== 10) {
+      el.classList.add('invalid');
+      return;
+    }
+    var phone = '+1' + digits;
+    answers[34] = phone;
+    sessionStorage.setItem('lwl_phone', phone);
+    // Save to Supabase (fire-and-forget)
+    _supabase.from('phone_leads').insert({ phone: phone, quiz_answers: answers }).then(function() {});
+    goToStep(35);
+  }
+
   function goBack() {
     if (currentStep > 1) {
       goToStep(currentStep - 1);
@@ -1659,7 +1714,7 @@
       if (barParent) { barParent.classList.remove('loading-bar-shimmer'); }
       triggerHaptic('medium');
     }, 3200);
-    setTimeout(function() { goToStep(35); }, 4000);
+    setTimeout(function() { goToStep(36); }, 4000);
   }
 
   // Insert header into DOM
@@ -1667,7 +1722,7 @@
     <div id="funnel-header" class="header" style="display:none;">
       <button class="back-btn" id="back-btn" onclick="goBack()">&#8592;</button>
       <div class="brand">Lazy<span style="color:#C07A5C;">WeightLoss</span></div>
-      <div class="step-count" id="step-count">2 / 35</div>
+      <div class="step-count" id="step-count">2 / 36</div>
     </div>
     <div id="main-progress-bar" class="progress-bar" style="display:none;">
       <div class="progress-fill" id="main-progress" style="width:0%"></div>
