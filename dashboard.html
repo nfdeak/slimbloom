@@ -32,8 +32,25 @@
     } else if (res.data.session) {
       _currentUser = res.data.session.user;
       _currentSession = res.data.session;
-      document.body.style.visibility = 'visible';
-      populateProfile(_currentUser);
+      // Verify user has an active subscription before showing dashboard
+      fetch('/api/subscription', {
+        method: 'GET',
+        headers: { 'Authorization': 'Bearer ' + res.data.session.access_token, 'Content-Type': 'application/json' }
+      }).then(function(r) { return r.json(); }).then(function(data) {
+        if (!data.subscription) {
+          // No subscription — sign out and redirect to plans
+          _supabase.auth.signOut().then(function() {
+            window.location.href = '/plans?noplan=1';
+          });
+          return;
+        }
+        document.body.style.visibility = 'visible';
+        populateProfile(_currentUser);
+      }).catch(function() {
+        // API error — still show dashboard to avoid locking out users
+        document.body.style.visibility = 'visible';
+        populateProfile(_currentUser);
+      });
     }
     // If _isRecovery and no session yet, wait for onAuthStateChange to handle it
   });

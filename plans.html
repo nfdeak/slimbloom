@@ -1496,8 +1496,18 @@ async function handleSendOtp() {
   if (digits.length !== 10) { errEl.textContent = 'Please enter a valid 10-digit phone number.'; errEl.style.display = 'block'; return; }
   _loginPhoneE164 = '+1' + digits;
   btn.disabled = true;
-  btn.textContent = 'Sending...';
+  btn.textContent = 'Checking...';
   try {
+    // Check if phone exists in phone_leads before sending OTP
+    var check = await fetch('/api/check-phone', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone: _loginPhoneE164 }) }).then(function(r) { return r.json(); });
+    if (!check.exists) {
+      errEl.textContent = 'No account found with this number. Please take the quiz first!';
+      errEl.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Send Code';
+      return;
+    }
+    btn.textContent = 'Sending...';
     var res = await _supabase.auth.signInWithOtp({ phone: _loginPhoneE164 });
     if (res.error) { errEl.textContent = res.error.message; errEl.style.display = 'block'; btn.disabled = false; btn.textContent = 'Send Code'; return; }
     showOtpView(el.value);
