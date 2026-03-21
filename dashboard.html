@@ -2895,6 +2895,14 @@
           } else if (tvVid.remote && tvVid.remote.prompt) {
             tvVid.remote.prompt().catch(function(){});
           }
+          // Pause the 9:16 video and show "Playing on TV" overlay
+          originalVid.pause();
+          originalVid.style.opacity = '0.15';
+          var tvOverlay = document.createElement('div');
+          tvOverlay.id = 'airplay-tv-overlay';
+          tvOverlay.style.cssText = 'position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:5;pointer-events:none;';
+          tvOverlay.innerHTML = '<svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#C07A5C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:12px;"><path d="M5 17H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-1"/><polygon points="12 15 17 21 7 21 12 15"/></svg><span style="color:#fff;font-size:18px;font-weight:600;letter-spacing:0.5px;">Playing on TV</span><span style="color:rgba(255,255,255,0.5);font-size:13px;margin-top:4px;">Swipe down to disconnect</span>';
+          document.getElementById('player-video-bg').appendChild(tvOverlay);
         });
         // Fallback
         setTimeout(function() {
@@ -2902,6 +2910,17 @@
             tvVid.webkitShowPlaybackTargetPicker();
           }
         }, 3000);
+        // Listen for AirPlay disconnect to restore phone video
+        tvVid.addEventListener('webkitcurrentplaybacktargetiswirelesschanged', function() {
+          if (!tvVid.webkitCurrentPlaybackTargetIsWireless) {
+            originalVid.style.opacity = '1';
+            originalVid.play().catch(function(){});
+            var overlay = document.getElementById('airplay-tv-overlay');
+            if (overlay) overlay.remove();
+            tvVid.pause();
+            tvVid.remove();
+          }
+        });
         return;
       }
     }
