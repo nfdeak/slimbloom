@@ -2501,6 +2501,37 @@
     _previewWorkout = null;
   }
 
+  // Hidden video element for preloading during countdown
+  var _preloadedVideo = null;
+  var _preloadedHls = null;
+
+  function preloadVideo(videoUrl) {
+    // Clean up any previous preload
+    if (_preloadedHls) { try { _preloadedHls.destroy(); } catch(e) {} _preloadedHls = null; }
+    if (_preloadedVideo) { try { _preloadedVideo.remove(); } catch(e) {} _preloadedVideo = null; }
+    var parsed = parseVideoUrl(videoUrl);
+    if (!parsed) return;
+    var vid = document.createElement('video');
+    vid.muted = true;
+    vid.playsInline = true;
+    vid.preload = 'auto';
+    vid.style.display = 'none';
+    document.body.appendChild(vid);
+    var hlsUrl = (parsed.type === 'mux' || parsed.type === 'hls') ? parsed.url : null;
+    if (hlsUrl && typeof Hls !== 'undefined' && Hls.isSupported()) {
+      var hls = new Hls({ startLevel: -1, capLevelToPlayerSize: true });
+      hls.loadSource(hlsUrl);
+      hls.attachMedia(vid);
+      _preloadedHls = hls;
+    } else if (hlsUrl && vid.canPlayType('application/vnd.apple.mpegurl')) {
+      vid.src = hlsUrl;
+    } else {
+      vid.src = parsed.url;
+    }
+    vid.load();
+    _preloadedVideo = vid;
+  }
+
   function launchWorkout(workoutData) {
     unlockAudio(); // Must happen inside user tap for iOS beeps
     triggerHaptic('medium');
@@ -2513,6 +2544,8 @@
         exercises: [{ name: workoutData.title, emoji: workoutData.emoji, anim: 'breathe', videoUrl: workoutData.videoUrl }],
         secondsPerExercise: workoutData.duration * 60
       };
+      // Start preloading video now — it buffers during 3-2-1 countdown
+      preloadVideo(workoutData.videoUrl);
     } else {
       seq = buildExerciseSequence(workoutData.category, workoutData.duration);
     }
@@ -2612,21 +2645,38 @@
     if (video) {
       if (video.type === 'mux' || video.type === 'hls' || video.type === 'direct') {
         // HLS/Mux adaptive streaming or direct MP4
-        videoBg.innerHTML = '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:1" id="video-loading-spinner"><div style="width:40px;height:40px;border:3px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.8s linear infinite"></div></div><video autoplay loop muted playsinline webkit-playsinline preload="auto"></video>';
-        var _vid = videoBg.querySelector('video');
-        var hlsUrl = (video.type === 'mux' || video.type === 'hls') ? video.url : null;
-        if (hlsUrl && typeof Hls !== 'undefined' && Hls.isSupported()) {
-          // Use HLS.js for adaptive streaming (Chrome, Firefox, etc.)
-          var hls = new Hls({ startLevel: -1, capLevelToPlayerSize: true });
-          hls.loadSource(hlsUrl);
-          hls.attachMedia(_vid);
-          hls.on(Hls.Events.MANIFEST_PARSED, function() { _vid.play(); });
-        } else if (hlsUrl && _vid.canPlayType('application/vnd.apple.mpegurl')) {
-          // Safari has native HLS support
-          _vid.src = hlsUrl;
+        videoBg.innerHTML = '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:1" id="video-loading-spinner"><div style="width:40px;height:40px;border:3px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.8s linear infinite"></div></div>';
+        var _vid;
+        // Reuse preloaded video if available (buffered during countdown)
+        if (_preloadedVideo) {
+          _vid = _preloadedVideo;
+          _vid.style.display = '';
+          _vid.loop = true;
+          _vid.autoplay = true;
+          videoBg.appendChild(_vid);
+          _preloadedVideo = null;
+          // HLS instance already attached from preload
+          _vid.play();
         } else {
-          // Fallback to direct MP4
-          _vid.src = video.url;
+          _vid = document.createElement('video');
+          _vid.autoplay = true;
+          _vid.loop = true;
+          _vid.muted = true;
+          _vid.playsInline = true;
+          _vid.setAttribute('webkit-playsinline', '');
+          _vid.preload = 'auto';
+          videoBg.appendChild(_vid);
+          var hlsUrl = (video.type === 'mux' || video.type === 'hls') ? video.url : null;
+          if (hlsUrl && typeof Hls !== 'undefined' && Hls.isSupported()) {
+            var hls = new Hls({ startLevel: -1, capLevelToPlayerSize: true });
+            hls.loadSource(hlsUrl);
+            hls.attachMedia(_vid);
+            hls.on(Hls.Events.MANIFEST_PARSED, function() { _vid.play(); });
+          } else if (hlsUrl && _vid.canPlayType('application/vnd.apple.mpegurl')) {
+            _vid.src = hlsUrl;
+          } else {
+            _vid.src = video.url;
+          }
         }
         _vid.addEventListener('playing', function() {
           var spinner = document.getElementById('video-loading-spinner');
@@ -2737,6 +2787,9 @@
   function closePlayer(didComplete) {
     clearInterval(playerState.timerInterval);
     clearInterval(playerState.countdownInterval);
+    // Clean up preloaded video if any
+    if (_preloadedHls) { try { _preloadedHls.destroy(); } catch(e) {} _preloadedHls = null; }
+    if (_preloadedVideo) { try { _preloadedVideo.remove(); } catch(e) {} _preloadedVideo = null; }
     document.getElementById('player-demo').innerHTML = '';
     document.getElementById('player-video-bg').innerHTML = '';
     document.getElementById('player-video-bg').classList.remove('active');
