@@ -2102,6 +2102,7 @@
     if (tab) { tab.classList.add('active'); moveSlider(tab); }
     window.scrollTo(0, 0);
     triggerHaptic('light');
+    playBeep(660, 0.08, 0.15);
   }
 
   document.querySelectorAll('.nav-tab').forEach(function(tab) {
