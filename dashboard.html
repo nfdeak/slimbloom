@@ -2857,43 +2857,62 @@
     closePlayer(false);
   });
 
-  // AirPlay / Cast button — swap to 16:9 TV version if available
+  // AirPlay / Cast button — use 16:9 TV version if available
   document.getElementById('player-airplay-btn').addEventListener('click', function() {
-    var vid = document.querySelector('#player-video-bg video');
-    if (!vid) return;
+    var originalVid = document.querySelector('#player-video-bg video');
+    if (!originalVid) return;
 
-    function showPicker() {
-      if (vid.webkitShowPlaybackTargetPicker) {
-        vid.webkitShowPlaybackTargetPicker();
-      } else if (vid.remote && vid.remote.prompt) {
-        vid.remote.prompt().catch(function() {});
-      } else {
-        alert('Use your browser\'s Cast or AirPlay feature to stream to your TV.');
-      }
-    }
-
-    // Check if there's a 16:9 TV version for this workout
     var tvUrl = playerState.workoutData && playerState.workoutData.videoUrlTV;
     if (tvUrl) {
       var parsed = parseVideoUrl(tvUrl);
       if (parsed) {
-        var currentTime = vid.currentTime;
+        // Remove any previous TV video element
+        var oldTv = document.getElementById('airplay-tv-video');
+        if (oldTv) oldTv.remove();
+        // Create a fresh video element with the 16:9 source
+        var tvVid = document.createElement('video');
+        tvVid.id = 'airplay-tv-video';
+        tvVid.setAttribute('x-webkit-airplay', 'allow');
+        tvVid.setAttribute('webkit-playsinline', '');
+        tvVid.playsInline = true;
+        tvVid.preload = 'auto';
+        tvVid.style.position = 'absolute';
+        tvVid.style.width = '1px';
+        tvVid.style.height = '1px';
+        tvVid.style.opacity = '0';
+        tvVid.style.pointerEvents = 'none';
+        document.body.appendChild(tvVid);
         var hlsUrl = (parsed.type === 'mux' || parsed.type === 'hls') ? parsed.url : null;
-        var srcUrl = hlsUrl || parsed.url;
-        // On iOS Safari, native HLS — set src and wait for canplay before showing picker
-        vid.src = srcUrl;
-        vid.load();
-        vid.addEventListener('canplay', function onCanPlay() {
-          vid.removeEventListener('canplay', onCanPlay);
-          vid.currentTime = currentTime;
-          vid.play().then(function() { showPicker(); }).catch(function() { showPicker(); });
+        tvVid.src = hlsUrl || parsed.url;
+        tvVid.currentTime = originalVid.currentTime;
+        tvVid.load();
+        tvVid.addEventListener('canplay', function onReady() {
+          tvVid.removeEventListener('canplay', onReady);
+          tvVid.currentTime = originalVid.currentTime;
+          tvVid.play().catch(function(){});
+          if (tvVid.webkitShowPlaybackTargetPicker) {
+            tvVid.webkitShowPlaybackTargetPicker();
+          } else if (tvVid.remote && tvVid.remote.prompt) {
+            tvVid.remote.prompt().catch(function(){});
+          }
         });
-        // Fallback if canplay never fires
-        setTimeout(function() { showPicker(); }, 3000);
+        // Fallback
+        setTimeout(function() {
+          if (tvVid.webkitShowPlaybackTargetPicker) {
+            tvVid.webkitShowPlaybackTargetPicker();
+          }
+        }, 3000);
         return;
       }
     }
-    showPicker();
+    // No TV version — cast the original
+    if (originalVid.webkitShowPlaybackTargetPicker) {
+      originalVid.webkitShowPlaybackTargetPicker();
+    } else if (originalVid.remote && originalVid.remote.prompt) {
+      originalVid.remote.prompt().catch(function(){});
+    } else {
+      alert('Use your browser\'s Cast or AirPlay feature to stream to your TV.');
+    }
   });
 
   // Tap video to pause/play with glass indicator
