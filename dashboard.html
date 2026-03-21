@@ -2857,22 +2857,41 @@
     closePlayer(false);
   });
 
-  // AirPlay / Cast button
+  // AirPlay / Cast button — swap to 16:9 TV version if available
   document.getElementById('player-airplay-btn').addEventListener('click', function() {
     var vid = document.querySelector('#player-video-bg video');
     if (!vid) return;
-    // Safari AirPlay
-    if (vid.webkitShowPlaybackTargetPicker) {
-      vid.webkitShowPlaybackTargetPicker();
+    // Check if there's a 16:9 TV version for this workout
+    var tvUrl = playerState.workoutData && playerState.workoutData.videoUrlTV;
+    if (tvUrl) {
+      var parsed = parseVideoUrl(tvUrl);
+      if (parsed) {
+        var currentTime = vid.currentTime;
+        var hlsUrl = (parsed.type === 'mux' || parsed.type === 'hls') ? parsed.url : null;
+        if (hlsUrl && typeof Hls !== 'undefined' && Hls.isSupported()) {
+          var hls = new Hls({ startLevel: -1, capLevelToPlayerSize: true });
+          hls.loadSource(hlsUrl);
+          hls.attachMedia(vid);
+          hls.on(Hls.Events.MANIFEST_PARSED, function() {
+            vid.currentTime = currentTime;
+            vid.play();
+          });
+        } else {
+          vid.src = hlsUrl || parsed.url;
+          vid.currentTime = currentTime;
+        }
+      }
     }
-    // Chrome Remote Playback API
-    else if (vid.remote && vid.remote.prompt) {
-      vid.remote.prompt().catch(function() {});
-    }
-    // Fallback — alert user
-    else {
-      alert('Use your browser\'s Cast or AirPlay feature to stream to your TV.');
-    }
+    // Trigger AirPlay/Cast picker
+    setTimeout(function() {
+      if (vid.webkitShowPlaybackTargetPicker) {
+        vid.webkitShowPlaybackTargetPicker();
+      } else if (vid.remote && vid.remote.prompt) {
+        vid.remote.prompt().catch(function() {});
+      } else {
+        alert('Use your browser\'s Cast or AirPlay feature to stream to your TV.');
+      }
+    }, tvUrl ? 500 : 0);
   });
 
   // Tap video to pause/play with glass indicator
