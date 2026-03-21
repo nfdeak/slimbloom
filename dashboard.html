@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1/dist/hls.min.js"></script>
 <title>Lazy Weight Loss - Your Dashboard</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <meta property="og:title" content="Lazy Weight Loss — Your Dashboard">
@@ -2299,9 +2300,14 @@
   // ===== VIDEO URL PARSER =====
   function parseVideoUrl(url) {
     if (!url) return null;
-    // Direct video file (MP4, WebM, Cloudinary, etc.)
-    if (/\.(mp4|webm|mov|m3u8)(\?|$)/i.test(url) || /res\.cloudinary\.com/i.test(url)) {
-      // Optimize Cloudinary videos for mobile — crisp quality, proper resolution
+    // Mux stream URL (playback ID or full stream.mux.com URL)
+    var muxMatch = url.match(/(?:stream\.mux\.com\/)([\w]+)/);
+    if (muxMatch) return { type: 'mux', id: muxMatch[1], url: 'https://stream.mux.com/' + muxMatch[1] + '.m3u8' };
+    if (/^mux:/.test(url)) return { type: 'mux', id: url.replace('mux:', ''), url: 'https://stream.mux.com/' + url.replace('mux:', '') + '.m3u8' };
+    // HLS stream
+    if (/\.m3u8(\?|$)/i.test(url)) return { type: 'hls', url: url };
+    // Direct video file (MP4, WebM, etc.)
+    if (/\.(mp4|webm|mov)(\?|$)/i.test(url) || /res\.cloudinary\.com/i.test(url)) {
       if (/res\.cloudinary\.com/i.test(url)) {
         url = url.replace(/\/upload\//, '/upload/q_auto,f_auto/');
       }
@@ -2357,6 +2363,17 @@
       link.id = 'video-preload-link';
       link.rel = 'preload';
       link.as = 'video';
+      link.href = previewVideo.url;
+      document.head.appendChild(link);
+    } else if (previewVideo && (previewVideo.type === 'mux' || previewVideo.type === 'hls')) {
+      // Preload HLS manifest for faster start
+      var link = document.getElementById('video-preload-link');
+      if (link) link.remove();
+      link = document.createElement('link');
+      link.id = 'video-preload-link';
+      link.rel = 'preload';
+      link.as = 'fetch';
+      link.crossOrigin = 'anonymous';
       link.href = previewVideo.url;
       document.head.appendChild(link);
     }
@@ -2593,14 +2610,27 @@
     videoBg.classList.remove('has-iframe');
     var video = parseVideoUrl(ex.videoUrl);
     if (video) {
-      if (video.type === 'direct') {
-        // Native <video> — start muted for iOS autoplay, unmute after playing
-        videoBg.innerHTML = '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:1" id="video-loading-spinner"><div style="width:40px;height:40px;border:3px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.8s linear infinite"></div></div><video src="' + escHtml(video.url) + '" autoplay loop muted playsinline webkit-playsinline preload="auto"></video>';
+      if (video.type === 'mux' || video.type === 'hls' || video.type === 'direct') {
+        // HLS/Mux adaptive streaming or direct MP4
+        videoBg.innerHTML = '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:1" id="video-loading-spinner"><div style="width:40px;height:40px;border:3px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.8s linear infinite"></div></div><video autoplay loop muted playsinline webkit-playsinline preload="auto"></video>';
         var _vid = videoBg.querySelector('video');
+        var hlsUrl = (video.type === 'mux' || video.type === 'hls') ? video.url : null;
+        if (hlsUrl && typeof Hls !== 'undefined' && Hls.isSupported()) {
+          // Use HLS.js for adaptive streaming (Chrome, Firefox, etc.)
+          var hls = new Hls({ startLevel: -1, capLevelToPlayerSize: true });
+          hls.loadSource(hlsUrl);
+          hls.attachMedia(_vid);
+          hls.on(Hls.Events.MANIFEST_PARSED, function() { _vid.play(); });
+        } else if (hlsUrl && _vid.canPlayType('application/vnd.apple.mpegurl')) {
+          // Safari has native HLS support
+          _vid.src = hlsUrl;
+        } else {
+          // Fallback to direct MP4
+          _vid.src = video.url;
+        }
         _vid.addEventListener('playing', function() {
           var spinner = document.getElementById('video-loading-spinner');
           if (spinner) spinner.remove();
-          // Unmute after playback starts (iOS requires muted for autoplay)
           setTimeout(function() { try { _vid.muted = false; } catch(e) {} }, 300);
         }, { once: true });
       } else {
