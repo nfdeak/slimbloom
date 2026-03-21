@@ -936,6 +936,15 @@
     transition: background 0.2s; position: relative; z-index: 3;
   }
   .player-close-btn:hover { background: rgba(255,255,255,0.25); }
+  .player-airplay-btn {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: rgba(255,255,255,0.15); border: none;
+    color: #fff; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s; position: absolute; right: 16px; top: 0; z-index: 3;
+  }
+  .player-airplay-btn:hover { background: rgba(255,255,255,0.25); }
+  .player-airplay-btn.hidden { display: none; }
   .player-exercise-count { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.6); position: relative; z-index: 3; }
   /* -- Emoji demo (no video) -- */
   .player-demo-area {
@@ -1490,6 +1499,9 @@
     <div class="player-top-bar">
       <button class="player-close-btn" id="player-close-btn">&times;</button>
       <div class="player-exercise-count" id="player-exercise-count">1 / 8</div>
+      <button class="player-airplay-btn" id="player-airplay-btn" title="AirPlay to TV">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-1"/><polygon points="12 15 17 21 7 21 12 15"/></svg>
+      </button>
     </div>
     <div class="player-video-bg" id="player-video-bg"></div>
     <div class="video-tap-zone" id="video-tap-zone">
@@ -2515,6 +2527,7 @@
     var vid = document.createElement('video');
     vid.muted = true;
     vid.playsInline = true;
+    vid.setAttribute('x-webkit-airplay', 'allow');
     vid.preload = 'auto';
     vid.style.display = 'none';
     document.body.appendChild(vid);
@@ -2665,6 +2678,7 @@
           _vid.muted = true;
           _vid.playsInline = true;
           _vid.setAttribute('webkit-playsinline', '');
+          _vid.setAttribute('x-webkit-airplay', 'allow');
           _vid.preload = 'auto';
           videoBg.appendChild(_vid);
           var hlsUrl = (video.type === 'mux' || video.type === 'hls') ? video.url : null;
@@ -2841,6 +2855,24 @@
   document.getElementById('player-close-btn').addEventListener('click', function() {
     triggerHaptic('medium');
     closePlayer(false);
+  });
+
+  // AirPlay / Cast button
+  document.getElementById('player-airplay-btn').addEventListener('click', function() {
+    var vid = document.querySelector('#player-video-bg video');
+    if (!vid) return;
+    // Safari AirPlay
+    if (vid.webkitShowPlaybackTargetPicker) {
+      vid.webkitShowPlaybackTargetPicker();
+    }
+    // Chrome Remote Playback API
+    else if (vid.remote && vid.remote.prompt) {
+      vid.remote.prompt().catch(function() {});
+    }
+    // Fallback — alert user
+    else {
+      alert('Use your browser\'s Cast or AirPlay feature to stream to your TV.');
+    }
   });
 
   // Tap video to pause/play with glass indicator
