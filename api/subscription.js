@@ -58,9 +58,22 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Database error' });
   }
 
-  // 5. If found, return it
+  // 5. If found, check if expired
   if (memberships && memberships.length > 0) {
-    return res.status(200).json({ subscription: memberships[0] });
+    const membership = memberships[0];
+    // Check if the plan has expired (renewal_period_end is in the past)
+    if (membership.renewal_period_end && new Date(membership.renewal_period_end) < new Date()) {
+      // Mark as expired if still showing active
+      if (membership.status === 'active') {
+        await supabase
+          .from('memberships')
+          .update({ status: 'expired' })
+          .eq('id', membership.id);
+        membership.status = 'expired';
+      }
+      return res.status(200).json({ subscription: null });
+    }
+    return res.status(200).json({ subscription: membership });
   }
 
   // 6. Lazy linking: try matching by email where user_id is null
