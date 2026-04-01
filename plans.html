@@ -1443,14 +1443,30 @@ document.addEventListener('click', function(e) {
 var _loginPhoneE164 = '';
 var _otpCooldown = false;
 
+// Detect if user is in North America via timezone
+var _isNorthAmerica = (function() {
+  try {
+    var tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+    return /^America\/|^US\/|^Canada\/|^Pacific\/Honolulu/.test(tz);
+  } catch(e) { return true; }
+})();
+
 function openLoginModal() {
-  showPhoneView();
+  if (_isNorthAmerica) {
+    showPhoneView();
+  } else {
+    showEmailView();
+  }
   document.getElementById('loginOverlay').classList.add('open');
   document.getElementById('loginError').style.display = 'none';
   document.getElementById('loginSuccess').style.display = 'none';
-  document.getElementById('loginPhone').value = '';
-  document.getElementById('loginSendBtn').disabled = true;
-  setTimeout(function() { document.getElementById('loginPhone').focus(); }, 100);
+  if (_isNorthAmerica) {
+    document.getElementById('loginPhone').value = '';
+    document.getElementById('loginSendBtn').disabled = true;
+    setTimeout(function() { document.getElementById('loginPhone').focus(); }, 100);
+  } else {
+    setTimeout(function() { document.getElementById('loginEmail').focus(); }, 100);
+  }
 }
 
 function closeLoginModal() {
