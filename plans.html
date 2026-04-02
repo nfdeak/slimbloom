@@ -1183,6 +1183,9 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
         <button class="checkout-close" onclick="closeCheckout()">&times;</button>
       </div>
       <div class="checkout-embed-wrap" id="checkoutEmbed"></div>
+      <div id="checkoutSuccess" style="display:none; text-align:center; padding:20px;">
+        <a href="/home?paid=true" style="display:inline-block; background:#C07A5C; color:#fff; padding:16px 40px; border-radius:30px; font-size:18px; font-weight:600; text-decoration:none;">Go to My Plan →</a>
+      </div>
     </div>
   </div>
 
@@ -1323,6 +1326,24 @@ function openCheckout(planId, planName) {
   embed.appendChild(checkoutDiv);
   overlay.classList.add('active');
   document.body.style.overflow = 'hidden';
+  // Hide success button when opening fresh checkout
+  document.getElementById('checkoutSuccess').style.display = 'none';
+  // Watch for Whop iframe to show success (poll for iframe changes)
+  if (window._whopPoll) clearInterval(window._whopPoll);
+  window._whopPoll = setInterval(function() {
+    try {
+      var iframes = embed.querySelectorAll('iframe');
+      for (var i = 0; i < iframes.length; i++) {
+        var src = iframes[i].src || '';
+        if (src.indexOf('success') !== -1 || src.indexOf('complete') !== -1 || src.indexOf('thank') !== -1) {
+          clearInterval(window._whopPoll);
+          document.getElementById('checkoutSuccess').style.display = 'block';
+          window.location.href = window.location.origin + '/home?paid=true';
+          return;
+        }
+      }
+    } catch(e) {}
+  }, 1000);
 }
 
 function closeCheckout() {
@@ -1330,18 +1351,30 @@ function closeCheckout() {
   overlay.classList.remove('active');
   document.body.style.overflow = '';
   document.getElementById('checkoutEmbed').innerHTML = '';
+  document.getElementById('checkoutSuccess').style.display = 'none';
+  if (window._whopPoll) clearInterval(window._whopPoll);
 }
 
 // Listen for Whop checkout completion via postMessage
 window.addEventListener('message', function(event) {
-  // Whop sends a message when checkout completes
-  if (event.data && (event.data.type === 'whop:checkout:completed' || event.data.type === 'whop:checkout:success' || (typeof event.data === 'string' && event.data.indexOf('checkout') !== -1 && event.data.indexOf('success') !== -1))) {
-    console.log('Whop checkout completed, redirecting...', event.data);
-    window.location.href = window.location.origin + '/home?paid=true';
-  }
-  // Log all messages from Whop iframe for debugging
-  if (event.data && typeof event.data === 'object' && event.data.type && event.data.type.indexOf('whop') !== -1) {
-    console.log('Whop message:', event.data);
+  // Log ALL messages for debugging
+  console.log('postMessage received:', event.origin, event.data);
+
+  var d = event.data;
+  // Check various possible Whop completion signals
+  if (d) {
+    var isComplete = false;
+    if (typeof d === 'string') {
+      var dl = d.toLowerCase();
+      if (dl.indexOf('success') !== -1 || dl.indexOf('complete') !== -1 || dl.indexOf('paid') !== -1) isComplete = true;
+    } else if (typeof d === 'object') {
+      var json = JSON.stringify(d).toLowerCase();
+      if (json.indexOf('success') !== -1 || json.indexOf('complete') !== -1 || json.indexOf('paid') !== -1 || d.status === 'completed' || d.status === 'success') isComplete = true;
+    }
+    if (isComplete) {
+      console.log('Whop checkout completed, redirecting...');
+      window.location.href = window.location.origin + '/home?paid=true';
+    }
   }
 });
 
