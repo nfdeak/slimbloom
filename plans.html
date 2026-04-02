@@ -1278,7 +1278,23 @@ function handleGetPlan() {
   openCheckout(planId, planName);
 }
 
+var _planPrices = {
+  'plan_VWsf3Cik0o7Vj': 39.99,
+  'plan_CGt8PI0ipZ9vR': 39.99,
+  'plan_KJiJ7FZ8lj9OR': 59.99
+};
+
 function openCheckout(planId, planName) {
+  // Fire TikTok InitiateCheckout event
+  if (typeof ttq !== 'undefined') {
+    ttq.track('InitiateCheckout', {
+      content_id: planId,
+      content_type: 'product',
+      content_name: planName,
+      value: _planPrices[planId] || 39.99,
+      currency: 'USD'
+    });
+  }
   var overlay = document.getElementById('checkoutOverlay');
   var embed = document.getElementById('checkoutEmbed');
   var title = document.getElementById('checkoutTitle');
