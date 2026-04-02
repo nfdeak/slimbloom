@@ -1281,17 +1281,21 @@ function applyCoupon() {
   }
 }
 
+var _selectedPlanId = null;
+var _selectedPlanName = null;
+
 function handleGetPlan() {
   if (couponApplied) {
-    // Open login modal — phone OTP handles both new/existing users
+    _selectedPlanId = null;
     openLoginModal();
     return;
   }
   var selected = document.querySelector('.plan-option.selected');
   if (!selected) { alert('Please select a plan'); return; }
-  var planId = selected.getAttribute('data-plan-id');
-  var planName = selected.querySelector('.plan-name').textContent;
-  openCheckout(planId, planName);
+  _selectedPlanId = selected.getAttribute('data-plan-id');
+  _selectedPlanName = selected.querySelector('.plan-name').textContent;
+  // Open login modal first — after login, user gets sent to Whop checkout
+  openLoginModal();
 }
 
 var _planPrices = {
@@ -1300,20 +1304,21 @@ var _planPrices = {
   'plan_KJiJ7FZ8lj9OR': 59.99
 };
 
-function openCheckout(planId, planName) {
+function redirectToCheckout() {
+  if (!_selectedPlanId) { window.location.href = '/home'; return; }
   // Fire TikTok InitiateCheckout event
   if (typeof ttq !== 'undefined') {
     ttq.track('InitiateCheckout', {
-      content_id: planId,
+      content_id: _selectedPlanId,
       content_type: 'product',
-      content_name: planName,
-      value: _planPrices[planId] || 39.99,
+      content_name: _selectedPlanName || 'Lazy Weight Loss Plan',
+      value: _planPrices[_selectedPlanId] || 39.99,
       currency: 'USD'
     });
   }
-  // Redirect to Whop's hosted checkout page (full browser redirect, not iframe)
+  // Redirect to Whop's hosted checkout page
   var returnUrl = encodeURIComponent(window.location.origin + '/home?paid=true');
-  window.location.href = 'https://whop.com/checkout/' + planId + '/?d2c=true&returnUrl=' + returnUrl;
+  window.location.href = 'https://whop.com/checkout/' + _selectedPlanId + '/?d2c=true&returnUrl=' + returnUrl;
 }
 
 function closeCheckout() {
@@ -1630,8 +1635,14 @@ async function handleVerifyOtp() {
         body: JSON.stringify({ coupon: document.getElementById('couponInput').value.trim() })
       }).then(function(r) { return r.json(); });
       if (couponRes.error) { errEl.textContent = couponRes.error; errEl.style.display = 'block'; btn.disabled = false; btn.textContent = 'Verify Code'; return; }
+      window.location.href = '/home';
+    } else if (_selectedPlanId) {
+      // Paid plan — redirect to Whop checkout
+      btn.textContent = 'Redirecting to checkout...';
+      redirectToCheckout();
+    } else {
+      window.location.href = '/home';
     }
-    window.location.href = '/home';
   } catch (e) { errEl.textContent = 'Something went wrong. Please try again.'; errEl.style.display = 'block'; btn.disabled = false; btn.textContent = 'Verify Code'; }
 }
 
@@ -1689,8 +1700,14 @@ async function handleEmailAuth() {
         body: JSON.stringify({ coupon: document.getElementById('couponInput').value.trim() })
       }).then(function(r) { return r.json(); });
       if (couponRes.error) { errEl.textContent = couponRes.error; errEl.style.display = 'block'; btn.disabled = false; btn.textContent = 'Log In'; return; }
+      window.location.href = '/home';
+    } else if (_selectedPlanId) {
+      // Paid plan — redirect to Whop checkout
+      btn.textContent = 'Redirecting to checkout...';
+      redirectToCheckout();
+    } else {
+      window.location.href = '/home';
     }
-    window.location.href = '/home';
   } catch (e) { errEl.textContent = 'Something went wrong. Please try again.'; errEl.style.display = 'block'; btn.disabled = false; btn.textContent = 'Log In'; }
 }
 
