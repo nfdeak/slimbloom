@@ -3505,8 +3505,16 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
       // Clean up URL
       window.history.replaceState({}, '', window.location.pathname);
       setTimeout(function() { showToast('Payment successful! Welcome to your plan!'); }, 500);
-      // Fire TikTok Pixel CompletePayment event
-      if (typeof ttq !== 'undefined') { ttq.track('CompletePayment'); }
+      // Fire TikTok Pixel CompletePayment event with value data
+      if (typeof ttq !== 'undefined') {
+        ttq.track('CompletePayment', {
+          content_id: 'lazy-weight-loss-plan',
+          content_type: 'product',
+          content_name: 'Lazy Weight Loss Plan',
+          value: 39.99,
+          currency: 'USD'
+        });
+      }
       // Mark phone lead as converted (fire-and-forget)
       var lwlPhone = sessionStorage.getItem('lwl_phone');
       if (lwlPhone) {
