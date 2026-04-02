@@ -1332,6 +1332,19 @@ function closeCheckout() {
   document.getElementById('checkoutEmbed').innerHTML = '';
 }
 
+// Listen for Whop checkout completion via postMessage
+window.addEventListener('message', function(event) {
+  // Whop sends a message when checkout completes
+  if (event.data && (event.data.type === 'whop:checkout:completed' || event.data.type === 'whop:checkout:success' || (typeof event.data === 'string' && event.data.indexOf('checkout') !== -1 && event.data.indexOf('success') !== -1))) {
+    console.log('Whop checkout completed, redirecting...', event.data);
+    window.location.href = window.location.origin + '/home?paid=true';
+  }
+  // Log all messages from Whop iframe for debugging
+  if (event.data && typeof event.data === 'object' && event.data.type && event.data.type.indexOf('whop') !== -1) {
+    console.log('Whop message:', event.data);
+  }
+});
+
 function selectPlan(el) {
   const section = el.closest('.pricing-section');
   section.querySelectorAll('.plan-option').forEach(p => p.classList.remove('selected'));
