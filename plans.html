@@ -1311,67 +1311,9 @@ function openCheckout(planId, planName) {
       currency: 'USD'
     });
   }
-  var overlay = document.getElementById('checkoutOverlay');
-  var embed = document.getElementById('checkoutEmbed');
-  var title = document.getElementById('checkoutTitle');
-  title.textContent = planName;
-  // Clear previous embed
-  embed.innerHTML = '';
-  // Create the Whop checkout div
-  var checkoutDiv = document.createElement('div');
-  checkoutDiv.setAttribute('data-whop-checkout-plan-id', planId);
-  checkoutDiv.setAttribute('data-whop-checkout-return-url', window.location.origin + '/home?paid=true');
-  checkoutDiv.setAttribute('data-whop-checkout-theme', 'light');
-  checkoutDiv.setAttribute('data-whop-checkout-theme-accent-color', '#C07A5C');
-  embed.appendChild(checkoutDiv);
-  overlay.classList.add('active');
-  document.body.style.overflow = 'hidden';
-  // Hide success button when opening fresh checkout
-  document.getElementById('checkoutSuccess').style.display = 'none';
-  // Watch for Whop iframe to show success (poll for iframe changes)
-  if (window._whopPoll) clearInterval(window._whopPoll);
-  window._whopPoll = setInterval(function() {
-    try {
-      var iframes = embed.querySelectorAll('iframe');
-      for (var i = 0; i < iframes.length; i++) {
-        var src = iframes[i].src || '';
-        if (src.indexOf('success') !== -1 || src.indexOf('complete') !== -1 || src.indexOf('thank') !== -1) {
-          clearInterval(window._whopPoll);
-          document.getElementById('checkoutSuccess').style.display = 'block';
-          window.location.href = window.location.origin + '/home?paid=true';
-          return;
-        }
-      }
-    } catch(e) {}
-  }, 1000);
-
-  // Always show "Go to My Plan" button after 30 seconds as fallback
-  if (window._whopFallbackTimer) clearTimeout(window._whopFallbackTimer);
-  window._whopFallbackTimer = setTimeout(function() {
-    if (document.getElementById('checkoutOverlay').classList.contains('active')) {
-      document.getElementById('checkoutSuccess').style.display = 'block';
-    }
-  }, 30000);
-
-  // Poll subscription API to auto-redirect when payment is processed
-  if (window._subPoll) clearInterval(window._subPoll);
-  window._subPoll = setInterval(async function() {
-    try {
-      var sess = await _supabase.auth.getSession();
-      if (!sess.data.session) return;
-      var r = await fetch('/api/subscription', {
-        method: 'GET',
-        headers: { 'Authorization': 'Bearer ' + sess.data.session.access_token, 'Content-Type': 'application/json' }
-      });
-      var data = await r.json();
-      if (data.subscription && data.subscription.plan_name !== 'Free 30-Day Access') {
-        clearInterval(window._subPoll);
-        clearInterval(window._whopPoll);
-        clearTimeout(window._whopFallbackTimer);
-        window.location.href = window.location.origin + '/home?paid=true';
-      }
-    } catch(e) {}
-  }, 5000);
+  // Redirect to Whop's hosted checkout page (full browser redirect, not iframe)
+  var returnUrl = encodeURIComponent(window.location.origin + '/home?paid=true');
+  window.location.href = 'https://whop.com/checkout/' + planId + '/?d2c=true&returnUrl=' + returnUrl;
 }
 
 function closeCheckout() {
@@ -1380,14 +1322,10 @@ function closeCheckout() {
   document.body.style.overflow = '';
   document.getElementById('checkoutEmbed').innerHTML = '';
   document.getElementById('checkoutSuccess').style.display = 'none';
-  if (window._whopPoll) clearInterval(window._whopPoll);
-  if (window._whopFallbackTimer) clearTimeout(window._whopFallbackTimer);
-  if (window._subPoll) clearInterval(window._subPoll);
 }
 
-// Listen for Whop checkout completion via postMessage
+// Listen for Whop checkout completion via postMessage (kept as backup)
 window.addEventListener('message', function(event) {
-  // Log ALL messages for debugging
   console.log('postMessage received:', event.origin, event.data);
 
   var d = event.data;
