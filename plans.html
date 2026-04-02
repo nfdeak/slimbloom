@@ -1344,6 +1344,34 @@ function openCheckout(planId, planName) {
       }
     } catch(e) {}
   }, 1000);
+
+  // Always show "Go to My Plan" button after 30 seconds as fallback
+  if (window._whopFallbackTimer) clearTimeout(window._whopFallbackTimer);
+  window._whopFallbackTimer = setTimeout(function() {
+    if (document.getElementById('checkoutOverlay').classList.contains('active')) {
+      document.getElementById('checkoutSuccess').style.display = 'block';
+    }
+  }, 30000);
+
+  // Poll subscription API to auto-redirect when payment is processed
+  if (window._subPoll) clearInterval(window._subPoll);
+  window._subPoll = setInterval(async function() {
+    try {
+      var sess = await _supabase.auth.getSession();
+      if (!sess.data.session) return;
+      var r = await fetch('/api/subscription', {
+        method: 'GET',
+        headers: { 'Authorization': 'Bearer ' + sess.data.session.access_token, 'Content-Type': 'application/json' }
+      });
+      var data = await r.json();
+      if (data.subscription && data.subscription.plan_name !== 'Free 30-Day Access') {
+        clearInterval(window._subPoll);
+        clearInterval(window._whopPoll);
+        clearTimeout(window._whopFallbackTimer);
+        window.location.href = window.location.origin + '/home?paid=true';
+      }
+    } catch(e) {}
+  }, 5000);
 }
 
 function closeCheckout() {
@@ -1353,6 +1381,8 @@ function closeCheckout() {
   document.getElementById('checkoutEmbed').innerHTML = '';
   document.getElementById('checkoutSuccess').style.display = 'none';
   if (window._whopPoll) clearInterval(window._whopPoll);
+  if (window._whopFallbackTimer) clearTimeout(window._whopFallbackTimer);
+  if (window._subPoll) clearInterval(window._subPoll);
 }
 
 // Listen for Whop checkout completion via postMessage
