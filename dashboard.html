@@ -58,6 +58,12 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
             }, 3000);
           });
         }
+        // Phone-only user with no subscription? Show email linking prompt
+        var user = _currentUser;
+        if (user && user.phone && !user.email) {
+          showEmailLinkingModal();
+          return false;
+        }
         _supabase.auth.signOut().then(function() {
           window.location.href = '/plans?noplan=1';
         });
@@ -144,6 +150,68 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
     if (avatarEl) {
       avatarEl.textContent = displayName ? displayName.charAt(0).toUpperCase() : '👩';
     }
+  }
+
+  // ===== EMAIL LINKING (phone-only users) =====
+  function showEmailLinkingModal() {
+    document.body.style.visibility = 'visible';
+    document.getElementById('linkOverlay').classList.add('active');
+    document.getElementById('linkEmail').value = '';
+    document.getElementById('linkErr').style.display = 'none';
+    setTimeout(function() { document.getElementById('linkEmail').focus(); }, 100);
+  }
+
+  async function handleLinkMembership() {
+    var email = document.getElementById('linkEmail').value.trim().toLowerCase();
+    var errEl = document.getElementById('linkErr');
+    var btn = document.getElementById('linkBtn');
+    errEl.style.display = 'none';
+
+    if (!email || !email.includes('@')) {
+      errEl.textContent = 'Please enter a valid email address.';
+      errEl.style.display = 'block';
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Connecting...';
+
+    try {
+      var res = await fetch('/api/link-membership', {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Bearer ' + _currentSession.access_token,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email: email })
+      });
+      var data = await res.json();
+
+      if (!res.ok || data.error) {
+        errEl.textContent = data.error || 'Something went wrong. Please try again.';
+        errEl.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = 'Connect My Plan';
+        return;
+      }
+
+      // Success — close modal and load dashboard
+      document.getElementById('linkOverlay').classList.remove('active');
+      _subscriptionVerified = true;
+      populateProfile(_currentUser);
+      checkPaymentReturn();
+    } catch (e) {
+      errEl.textContent = 'Something went wrong. Please try again.';
+      errEl.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Connect My Plan';
+    }
+  }
+
+  function linkBackToPlans() {
+    _supabase.auth.signOut().then(function() {
+      window.location.href = '/plans';
+    });
   }
 
   function showPasswordResetModal() {
@@ -1294,6 +1362,41 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
   .pw-reset-box .pw-reset-ok {
     color: #2a8a4a; font-size: 13px; margin-top: 8px; display: none;
   }
+
+  /* Email Linking Modal (for phone-only users after payment) */
+  .link-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.55); z-index: 9999;
+    align-items: center; justify-content: center;
+  }
+  .link-overlay.active { display: flex; }
+  .link-box {
+    background: #fff; border-radius: 16px; padding: 36px 28px;
+    max-width: 400px; width: 90%; text-align: center;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  }
+  .link-box h2 { color: #2D2A26; font-size: 22px; margin: 0 0 8px; }
+  .link-box p { color: #7A756E; font-size: 14px; margin: 0 0 20px; line-height: 1.5; }
+  .link-box input {
+    width: 100%; padding: 14px 14px; border: 1.5px solid #E0D8CF;
+    border-radius: 10px; font-size: 16px; margin-bottom: 12px;
+    box-sizing: border-box; outline: none;
+  }
+  .link-box input:focus { border-color: #C07A5C; }
+  .link-box .link-btn {
+    width: 100%; padding: 14px; background: #C07A5C; color: #fff;
+    border: none; border-radius: 10px; font-size: 16px; font-weight: 600;
+    cursor: pointer;
+  }
+  .link-box .link-btn:hover { background: #a8654a; }
+  .link-box .link-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+  .link-box .link-err {
+    color: #d44; font-size: 13px; margin-top: 10px; display: none;
+  }
+  .link-box .link-back {
+    display: block; margin-top: 16px; color: #7A756E; font-size: 13px;
+    cursor: pointer; text-decoration: underline;
+  }
 </style>
 </head>
 <body>
@@ -1308,6 +1411,18 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
     <button class="pw-reset-btn" onclick="submitNewPassword()">Update Password</button>
     <div class="pw-reset-err" id="pwResetErr"></div>
     <div class="pw-reset-ok" id="pwResetOk"></div>
+  </div>
+</div>
+
+<!-- Email Linking Modal (phone-only users) -->
+<div class="link-overlay" id="linkOverlay">
+  <div class="link-box">
+    <h2>Almost there!</h2>
+    <p>Enter the email you used when you paid on Whop so we can connect your plan.</p>
+    <input type="email" id="linkEmail" placeholder="you@email.com" onkeydown="if(event.key==='Enter')handleLinkMembership()">
+    <button class="link-btn" id="linkBtn" onclick="handleLinkMembership()">Connect My Plan</button>
+    <div class="link-err" id="linkErr"></div>
+    <span class="link-back" onclick="linkBackToPlans()">I haven't purchased yet</span>
   </div>
 </div>
 
