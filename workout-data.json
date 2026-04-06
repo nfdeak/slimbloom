@@ -121,53 +121,10 @@
       "duration": 15,
       "difficulty": "Beginner",
       "category": "yoga",
-      "videoUrl": "https://stream.mux.com/pUecpECy027gJJ00kbfLkH003tmw2hAGgNp56ncE601NsVo.m3u8",
+      "videoUrl": "https://stream.mux.com/I79016RuOu9ETq02kUw5SnjiqKcSbb1MR01yMyK4M2KMvQ",
       "videoUrlTV": "https://stream.mux.com/1F5A01yCQ018IAKei7r00z6yGG6CEzw301gcTkrrT8PR1Jg.m3u8",
       "imageUrl": "https://vlfnixgkhfyidmhrglrj.supabase.co/storage/v1/object/public/workout-thumbnails/morning-yoga-flow-1771708773767.png",
-      "overviewExercises": [
-        {
-          "name": "Chiar Yoga",
-          "emoji": "🧘",
-          "duration": 113,
-          "imageUrl": "https://vlfnixgkhfyidmhrglrj.supabase.co/storage/v1/object/public/workout-thumbnails/ov-mountain-pose-1771909367409.png"
-        }
-      ]
-    },
-    {
-      "title": "Bottle Cardio",
-      "emoji": "💧",
-      "duration": 15,
-      "difficulty": "Beginner",
-      "category": "cardio",
-      "videoUrl": "https://stream.mux.com/TwmK1zlBDzkgWibt6rzw1BCK008jN1Eix8P4j3vYk7CY.m3u8",
-      "videoUrlTV": "",
-      "imageUrl": "",
-      "overviewExercises": [
-        {
-          "name": "Bottle Cardio",
-          "emoji": "💧",
-          "duration": 900,
-          "imageUrl": ""
-        }
-      ]
-    },
-    {
-      "title": "Morning Yoga",
-      "emoji": "🧘",
-      "duration": 15,
-      "difficulty": "Beginner",
-      "category": "yoga",
-      "videoUrl": "https://stream.mux.com/3w6vIwL9cRQDyTBmYgG02KsGpXVB67MUCjntNFz5JbGE.m3u8",
-      "videoUrlTV": "",
-      "imageUrl": "",
-      "overviewExercises": [
-        {
-          "name": "Morning Yoga",
-          "emoji": "🧘",
-          "duration": 900,
-          "imageUrl": ""
-        }
-      ]
+      "overviewExercises": []
     }
   ],
   "exerciseDb": {
