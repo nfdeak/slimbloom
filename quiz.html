@@ -1925,6 +1925,11 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
     document.getElementById('loginSendBtn').disabled = (digits.length !== 10);
   }
 
+  var _otpSendCount = 0;
+  var _otpSendWindowStart = Date.now();
+  var _OTP_MAX_SENDS = 5;
+  var _OTP_WINDOW_MS = 10 * 60 * 1000;
+
   async function handleSendOtp() {
     var el = document.getElementById('loginPhone');
     var digits = el.value.replace(/\D/g, '');
@@ -1932,12 +1937,31 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
     var btn = document.getElementById('loginSendBtn');
     errEl.style.display = 'none';
     if (digits.length !== 10) { errEl.textContent = 'Please enter a valid 10-digit phone number.'; errEl.style.display = 'block'; return; }
+
+    // Client-side rate limiting
+    var now = Date.now();
+    if (now - _otpSendWindowStart > _OTP_WINDOW_MS) { _otpSendCount = 0; _otpSendWindowStart = now; }
+    _otpSendCount++;
+    if (_otpSendCount > _OTP_MAX_SENDS) {
+      errEl.textContent = 'Too many attempts. Please wait a few minutes and try again.';
+      errEl.style.display = 'block';
+      return;
+    }
+
     _loginPhoneE164 = '+1' + digits;
     btn.disabled = true;
     btn.textContent = 'Checking...';
     try {
       // Check if phone exists in phone_leads before sending OTP
-      var check = await fetch('/api/check-phone', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone: _loginPhoneE164 }) }).then(function(r) { return r.json(); });
+      var checkRes = await fetch('/api/check-phone', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone: _loginPhoneE164 }) });
+      var check = await checkRes.json();
+      if (checkRes.status === 429) {
+        errEl.textContent = check.error || 'Too many requests. Please try again in a few minutes.';
+        errEl.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = 'Send Code';
+        return;
+      }
       if (!check.exists) {
         errEl.textContent = 'No account found with this number. Please take the quiz first!';
         errEl.style.display = 'block';
