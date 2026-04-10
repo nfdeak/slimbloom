@@ -54,6 +54,14 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Invalid phone number' });
   }
 
+  // Blocked numbers (known bots/spam)
+  const BLOCKED_NUMBERS = [
+    '+11255844485',
+  ];
+  if (BLOCKED_NUMBERS.includes(phone)) {
+    return res.status(200).json({ exists: false });
+  }
+
   const supabase = createClient(
     process.env.SUPABASE_URL,
     process.env.SUPABASE_SERVICE_ROLE_KEY
