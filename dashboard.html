@@ -3860,20 +3860,28 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
       // Clean up URL
       window.history.replaceState({}, '', window.location.pathname);
       setTimeout(function() { showToast('Payment successful! Welcome to your plan!'); }, 500);
-      // Fire TikTok Pixel purchase events with value data
+      // Fire TikTok Pixel purchase events with user data + actual plan price
       if (typeof ttq !== 'undefined') {
+        // Identify user so TikTok can match conversions
+        var _pixelEmail = (_currentUser && _currentUser.email) ? _currentUser.email : '';
+        var _pixelPhone = (_currentUser && _currentUser.phone) ? _currentUser.phone : '';
+        if (_pixelEmail || _pixelPhone) {
+          ttq.identify({ email: _pixelEmail, phone_number: _pixelPhone });
+        }
+        // Get actual plan price from sessionStorage or default
+        var _pixelPrice = parseFloat(sessionStorage.getItem('lwl_plan_price')) || 39.99;
         ttq.track('CompletePayment', {
           content_id: 'lazy-weight-loss-plan',
           content_type: 'product',
           content_name: 'Lazy Weight Loss Plan',
-          value: 39.99,
+          value: _pixelPrice,
           currency: 'USD'
         });
         ttq.track('Purchase', {
           content_id: 'lazy-weight-loss-plan',
           content_type: 'product',
           content_name: 'Lazy Weight Loss Plan',
-          value: 39.99,
+          value: _pixelPrice,
           currency: 'USD'
         });
       }

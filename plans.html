@@ -1450,13 +1450,16 @@ var _planPrices = {
 
 function redirectToCheckout() {
   if (!_selectedPlanId) { window.location.href = '/home'; return; }
+  var _checkoutPrice = _planPrices[_selectedPlanId] || 39.99;
+  // Store price for dashboard Purchase event
+  sessionStorage.setItem('lwl_plan_price', _checkoutPrice.toString());
   // Fire TikTok InitiateCheckout event
   if (typeof ttq !== 'undefined') {
     ttq.track('InitiateCheckout', {
       content_id: _selectedPlanId,
       content_type: 'product',
       content_name: _selectedPlanName || 'Lazy Weight Loss Plan',
-      value: _planPrices[_selectedPlanId] || 39.99,
+      value: _checkoutPrice,
       currency: 'USD'
     });
   }
