@@ -88,9 +88,16 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
     });
   }
 
+  var _isPaidReturn = new URLSearchParams(window.location.search).get('paid') === 'true' || new URLSearchParams(window.location.search).get('status') === 'success';
+
   _supabase.auth.getSession().then(function(res) {
     if (!res.data.session && !_isRecovery) {
-      window.location.href = '/plans';
+      if (_isPaidReturn) {
+        // User just paid but has no account yet — show signup modal
+        showPostPaymentSignup();
+      } else {
+        window.location.href = '/plans';
+      }
     } else if (res.data.session) {
       _currentUser = res.data.session.user;
       _currentSession = res.data.session;
@@ -212,6 +219,121 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
     _supabase.auth.signOut().then(function() {
       window.location.href = '/plans';
     });
+  }
+
+  // ===== POST-PAYMENT SIGNUP FLOW =====
+  var _signupPhoneE164 = '';
+
+  function showPostPaymentSignup() {
+    document.body.style.visibility = 'visible';
+    document.getElementById('signupOverlay').classList.add('active');
+  }
+
+  function formatSignupPhone(el) {
+    var digits = el.value.replace(/\D/g, '').slice(0, 10);
+    var formatted = '';
+    if (digits.length > 0) formatted = '(' + digits.slice(0, 3);
+    if (digits.length >= 3) formatted += ') ';
+    if (digits.length > 3) formatted += digits.slice(3, 6);
+    if (digits.length >= 6) formatted += '-' + digits.slice(6);
+    el.value = formatted;
+    document.getElementById('signupSendBtn').disabled = (digits.length !== 10);
+  }
+
+  function showSignupEmailView() {
+    document.getElementById('signupPhoneStep').style.display = 'none';
+    document.getElementById('signupEmailStep').style.display = 'block';
+    document.getElementById('signupOtpStep').style.display = 'none';
+  }
+
+  function showSignupPhoneView() {
+    document.getElementById('signupPhoneStep').style.display = 'block';
+    document.getElementById('signupEmailStep').style.display = 'none';
+    document.getElementById('signupOtpStep').style.display = 'none';
+  }
+
+  async function handleSignupSendOtp() {
+    var el = document.getElementById('signupPhone');
+    var digits = el.value.replace(/\D/g, '');
+    var errEl = document.getElementById('signupErr');
+    var btn = document.getElementById('signupSendBtn');
+    errEl.style.display = 'none';
+    if (digits.length !== 10) { errEl.textContent = 'Please enter a valid 10-digit phone number.'; errEl.style.display = 'block'; return; }
+    _signupPhoneE164 = '+1' + digits;
+    btn.disabled = true;
+    btn.textContent = 'Sending code...';
+    try {
+      var res = await _supabase.auth.signInWithOtp({ phone: _signupPhoneE164 });
+      if (res.error) { errEl.textContent = res.error.message; errEl.style.display = 'block'; btn.disabled = false; btn.textContent = 'Create My Account'; return; }
+      // Show OTP step
+      document.getElementById('signupPhoneStep').style.display = 'none';
+      document.getElementById('signupOtpStep').style.display = 'block';
+      document.getElementById('signupOtpPhone').textContent = el.value;
+      btn.disabled = false;
+      btn.textContent = 'Create My Account';
+    } catch (e) {
+      errEl.textContent = 'Something went wrong. Please try again.';
+      errEl.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Create My Account';
+    }
+  }
+
+  async function handleSignupVerifyOtp() {
+    var code = document.getElementById('signupOtpCode').value.trim();
+    var errEl = document.getElementById('signupOtpErr');
+    var btn = document.getElementById('signupVerifyBtn');
+    errEl.style.display = 'none';
+    if (!code || code.length !== 6) { errEl.textContent = 'Please enter the 6-digit code.'; errEl.style.display = 'block'; return; }
+    btn.disabled = true;
+    btn.textContent = 'Verifying...';
+    try {
+      var res = await _supabase.auth.verifyOtp({ phone: _signupPhoneE164, token: code, type: 'sms' });
+      if (res.error) { errEl.textContent = res.error.message; errEl.style.display = 'block'; btn.disabled = false; btn.textContent = 'Verify & Enter'; return; }
+      // Account created! Now verify subscription
+      _currentUser = res.data.session.user;
+      _currentSession = res.data.session;
+      document.getElementById('signupOverlay').classList.remove('active');
+      verifySubscription(res.data.session);
+    } catch (e) {
+      errEl.textContent = 'Something went wrong. Please try again.';
+      errEl.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Verify & Enter';
+    }
+  }
+
+  async function handleSignupEmail() {
+    var email = document.getElementById('signupEmail').value.trim();
+    var pass = document.getElementById('signupPass').value;
+    var errEl = document.getElementById('signupEmailErr');
+    var btn = document.getElementById('signupEmailBtn');
+    errEl.style.display = 'none';
+    if (!email || !pass) { errEl.textContent = 'Please enter your email and password.'; errEl.style.display = 'block'; return; }
+    if (pass.length < 6) { errEl.textContent = 'Password must be at least 6 characters.'; errEl.style.display = 'block'; return; }
+    btn.disabled = true;
+    btn.textContent = 'Creating account...';
+    try {
+      // Try sign up first
+      var res = await _supabase.auth.signUp({ email: email, password: pass });
+      if (res.error) {
+        // If user already exists, try sign in
+        if (res.error.message.includes('already registered')) {
+          res = await _supabase.auth.signInWithPassword({ email: email, password: pass });
+        }
+        if (res.error) { errEl.textContent = res.error.message; errEl.style.display = 'block'; btn.disabled = false; btn.textContent = 'Create My Account'; return; }
+      }
+      // Account created! Verify subscription
+      _currentUser = res.data.session.user;
+      _currentSession = res.data.session;
+      document.getElementById('signupOverlay').classList.remove('active');
+      verifySubscription(res.data.session);
+    } catch (e) {
+      errEl.textContent = 'Something went wrong. Please try again.';
+      errEl.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Create My Account';
+    }
   }
 
   function showPasswordResetModal() {
@@ -1397,6 +1519,62 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
     display: block; margin-top: 16px; color: #7A756E; font-size: 13px;
     cursor: pointer; text-decoration: underline;
   }
+
+  /* Post-Payment Signup Modal */
+  .signup-overlay {
+    display: none; position: fixed; inset: 0;
+    background: #FAF6F1; z-index: 9999;
+    align-items: center; justify-content: center;
+    flex-direction: column;
+  }
+  .signup-overlay.active { display: flex; }
+  .signup-box {
+    background: #fff; border-radius: 20px; padding: 40px 28px;
+    max-width: 400px; width: 90%; text-align: center;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+  }
+  .signup-box .signup-check { font-size: 48px; margin-bottom: 12px; }
+  .signup-box h2 { color: #2D2A26; font-size: 24px; margin: 0 0 8px; font-weight: 800; }
+  .signup-box .signup-sub { color: #7A756E; font-size: 14px; margin: 0 0 24px; line-height: 1.5; }
+  .signup-box .signup-divider {
+    display: flex; align-items: center; gap: 12px;
+    margin: 18px 0; color: #B8AFA6; font-size: 12px;
+  }
+  .signup-box .signup-divider::before, .signup-box .signup-divider::after {
+    content: ''; flex: 1; height: 1px; background: #E0D6CC;
+  }
+  .signup-box input {
+    width: 100%; padding: 14px; border: 1.5px solid #E0D8CF;
+    border-radius: 10px; font-size: 16px; margin-bottom: 12px;
+    box-sizing: border-box; outline: none; font-family: inherit;
+  }
+  .signup-box input:focus { border-color: #C07A5C; }
+  .signup-box .signup-btn {
+    width: 100%; padding: 14px; background: #C07A5C; color: #fff;
+    border: none; border-radius: 10px; font-size: 16px; font-weight: 700;
+    cursor: pointer; font-family: inherit;
+  }
+  .signup-box .signup-btn:hover { background: #a8654a; }
+  .signup-box .signup-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+  .signup-box .signup-err {
+    color: #d44; font-size: 13px; margin-top: 10px; display: none;
+  }
+  .signup-box .signup-success {
+    color: #22c55e; font-size: 13px; margin-top: 10px; display: none;
+  }
+  .signup-phone-row {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 12px;
+  }
+  .signup-phone-prefix {
+    background: #F5EEE6; border: 1.5px solid #E0D8CF; border-radius: 10px;
+    padding: 14px; font-size: 16px; font-weight: 600; color: #2D2A26;
+    white-space: nowrap;
+  }
+  .signup-phone-row input { margin-bottom: 0; flex: 1; }
+  .signup-otp-input {
+    text-align: center; font-size: 24px; letter-spacing: 8px; font-weight: 600;
+  }
+  .signup-otp-info { font-size: 13px; color: #7A756E; margin-bottom: 16px; line-height: 1.5; }
 </style>
 </head>
 <body>
@@ -1411,6 +1589,49 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
     <button class="pw-reset-btn" onclick="submitNewPassword()">Update Password</button>
     <div class="pw-reset-err" id="pwResetErr"></div>
     <div class="pw-reset-ok" id="pwResetOk"></div>
+  </div>
+</div>
+
+<!-- Post-Payment Signup Modal -->
+<div class="signup-overlay" id="signupOverlay">
+  <div class="signup-box">
+    <!-- Step 1: Phone number -->
+    <div id="signupPhoneStep">
+      <div class="signup-check">&#10003;</div>
+      <h2>Payment Successful!</h2>
+      <p class="signup-sub">Create your account to access your personalized workout plan.</p>
+      <div class="signup-phone-row">
+        <span class="signup-phone-prefix">+1</span>
+        <input type="tel" id="signupPhone" placeholder="(555) 123-4567" oninput="formatSignupPhone(this)" maxlength="14">
+      </div>
+      <button class="signup-btn" id="signupSendBtn" onclick="handleSignupSendOtp()" disabled>Create My Account</button>
+      <div class="signup-err" id="signupErr"></div>
+      <div class="signup-divider">or</div>
+      <button class="signup-btn" style="background:#2D2A26;" onclick="showSignupEmailView()">Use email instead</button>
+    </div>
+
+    <!-- Step 1b: Email signup -->
+    <div id="signupEmailStep" style="display:none;">
+      <div class="signup-check">&#10003;</div>
+      <h2>Payment Successful!</h2>
+      <p class="signup-sub">Enter the email you used on Whop to access your plan.</p>
+      <input type="email" id="signupEmail" placeholder="you@email.com">
+      <input type="password" id="signupPass" placeholder="Create a password (min 6 chars)">
+      <button class="signup-btn" id="signupEmailBtn" onclick="handleSignupEmail()">Create My Account</button>
+      <div class="signup-err" id="signupEmailErr"></div>
+      <div class="signup-divider">or</div>
+      <button class="signup-btn" style="background:#2D2A26;" onclick="showSignupPhoneView()">Use phone instead</button>
+    </div>
+
+    <!-- Step 2: OTP verification -->
+    <div id="signupOtpStep" style="display:none;">
+      <div class="signup-check">&#128242;</div>
+      <h2>Verify Your Number</h2>
+      <p class="signup-otp-info">We sent a 6-digit code to <strong id="signupOtpPhone"></strong></p>
+      <input type="tel" class="signup-otp-input" id="signupOtpCode" placeholder="000000" maxlength="6" oninput="if(this.value.length===6)handleSignupVerifyOtp()">
+      <button class="signup-btn" id="signupVerifyBtn" onclick="handleSignupVerifyOtp()">Verify &amp; Enter</button>
+      <div class="signup-err" id="signupOtpErr"></div>
+    </div>
   </div>
 </div>
 

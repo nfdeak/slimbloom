@@ -1438,8 +1438,8 @@ function handleGetPlan() {
   if (!selected) { alert('Please select a plan'); return; }
   _selectedPlanId = selected.getAttribute('data-plan-id');
   _selectedPlanName = selected.querySelector('.plan-name').textContent;
-  // Open login modal first — after login, user gets sent to Whop checkout
-  openLoginModal();
+  // Go straight to Whop checkout — no login required
+  redirectToCheckout();
 }
 
 var _planPrices = {
