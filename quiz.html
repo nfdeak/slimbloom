@@ -1552,6 +1552,21 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
 
       next.scrollTop = 0;
       window.scrollTo(0, 0);
+
+      // Track quiz milestones via TikTok Pixel
+      if (typeof ttq !== 'undefined') {
+        if (step === 2) {
+          ttq.track('ClickButton', { description: 'quiz_started' });
+        } else if (step === 9) {
+          ttq.track('ClickButton', { description: 'quiz_25_percent' });
+        } else if (step === 18) {
+          ttq.track('ClickButton', { description: 'quiz_50_percent' });
+        } else if (step === 27) {
+          ttq.track('ClickButton', { description: 'quiz_75_percent' });
+        } else if (step === 35) {
+          ttq.track('ClickButton', { description: 'quiz_completed' });
+        }
+      }
     }
   }
 
