@@ -77,5 +77,7 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Database error' });
   }
 
+  // Add consistent delay to prevent timing-based enumeration
+  await new Promise(r => setTimeout(r, 200 + Math.random() * 300));
   return res.status(200).json({ exists: data && data.length > 0 });
 }

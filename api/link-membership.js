@@ -26,8 +26,8 @@ export default async function handler(req, res) {
 
   // 2. Parse body
   const { email } = req.body || {};
-  if (!email || typeof email !== 'string') {
-    return res.status(400).json({ error: 'Email is required' });
+  if (!email || typeof email !== 'string' || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return res.status(400).json({ error: 'A valid email is required' });
   }
 
   // 3. Initialize Supabase
@@ -76,10 +76,7 @@ export default async function handler(req, res) {
       .eq('whop_user_email', email.toLowerCase())
       .limit(1);
 
-    if (anyMembership && anyMembership.length > 0) {
-      return res.status(404).json({ error: 'This membership is already linked to another account. Please contact support.' });
-    }
-    return res.status(404).json({ error: 'No membership found with that email. Please double-check the email you used for payment.' });
+    return res.status(404).json({ error: 'No membership found. Please check the email you used for payment or contact support.' });
   }
 
   // 7. Link the membership to this user
