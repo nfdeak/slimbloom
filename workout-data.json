@@ -163,7 +163,24 @@
       "imageUrl": "https://vlfnixgkhfyidmhrglrj.supabase.co/storage/v1/object/public/workout-thumbnails/7.png",
       "desc": "Relaxing chair yoga for when you want to stretch without leaving your seat. Perfect for any time of day.",
       "cal": 60,
-      "overviewExercises": []
+      "overviewExercises": [
+        { "name": "Arm Rotations", "emoji": "\ud83d\udd04", "duration": 56 },
+        { "name": "Back Neck Stretch", "emoji": "\ud83d\ude0c", "duration": 56 },
+        { "name": "Chair Shoulder Circles", "emoji": "\ud83e\udd37", "duration": 56 },
+        { "name": "Chair Windmill", "emoji": "\ud83c\udf00", "duration": 56 },
+        { "name": "Chest Openers", "emoji": "\ud83d\ude4c", "duration": 56 },
+        { "name": "Eagle Arms", "emoji": "\ud83e\udd85", "duration": 56 },
+        { "name": "Elbow Rotations", "emoji": "\ud83d\udd04", "duration": 56 },
+        { "name": "Flat Back to Forward Fold", "emoji": "\ud83d\ude47", "duration": 56 },
+        { "name": "Gentle Shoulder Circles", "emoji": "\ud83e\udd37", "duration": 56 },
+        { "name": "Seated Active Forward Fold", "emoji": "\ud83e\uddd8", "duration": 56 },
+        { "name": "Seated Back Stretch", "emoji": "\ud83e\uddce", "duration": 56 },
+        { "name": "Seated Side Stretch", "emoji": "\ud83e\uddd8", "duration": 56 },
+        { "name": "Seated Spinal Twist", "emoji": "\ud83d\udd04", "duration": 56 },
+        { "name": "Shoulder Twist", "emoji": "\ud83d\udcaa", "duration": 56 },
+        { "name": "Spinal Twist", "emoji": "\ud83d\udd04", "duration": 56 },
+        { "name": "Upward Stretch", "emoji": "\ud83d\ude4c", "duration": 56 }
+      ]
     },
     {
       "title": "Seated Chair Yoga Flow",
