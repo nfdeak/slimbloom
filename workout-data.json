@@ -8,6 +8,7 @@
       "diffColor": "#22c55e",
       "category": "yoga",
       "videoUrl": "https://stream.mux.com/YRDEbjIGI9rtpWXXIXBPdBY2Z6TZt4ndLzbOwBytCic.m3u8",
+      "imageUrl": "https://vlfnixgkhfyidmhrglrj.supabase.co/storage/v1/object/public/workout-thumbnails/9.png",
       "desc": "Gentle stretching and breathing exercises designed for flexibility and calm. Perfect start to your day.",
       "cal": 85,
       "overviewExercises": [
@@ -29,6 +30,7 @@
       "diffColor": "#22c55e",
       "category": "walking",
       "videoUrl": "https://stream.mux.com/jLG2LKYkCeNtOm00p2H2lh2TVzdpg1BpnjG6imZNboD8.m3u8",
+      "imageUrl": "https://vlfnixgkhfyidmhrglrj.supabase.co/storage/v1/object/public/workout-thumbnails/5.png",
       "desc": "Brisk walk with intervals of faster pace. Focus on posture and arm movement for a full-body benefit.",
       "cal": 120,
       "overviewExercises": [
@@ -49,6 +51,7 @@
       "diffColor": "#22c55e",
       "category": "bottle",
       "videoUrl": "https://stream.mux.com/VbiCvswuXxcrM5IQj3V7noDDFUY599wmGygCBLqTEi8.m3u8",
+      "imageUrl": "https://vlfnixgkhfyidmhrglrj.supabase.co/storage/v1/object/public/workout-thumbnails/3.png",
       "desc": "Grab a water bottle and build strength with simple, effective exercises. No gym equipment needed!",
       "cal": 75,
       "overviewExercises": [
@@ -69,6 +72,7 @@
       "diffColor": "#3b82f6",
       "category": "stretching",
       "videoUrl": "https://stream.mux.com/ACumG7EhpQwlRVp1IDu1o8yyDPUBa49ZsVx6nof02rlg.m3u8",
+      "imageUrl": "https://vlfnixgkhfyidmhrglrj.supabase.co/storage/v1/object/public/workout-thumbnails/8.png",
       "desc": "Gentle chair stretching and deep breathing. Let your body recover and rebuild from your comfy seat.",
       "cal": 30,
       "isRest": true,
@@ -90,6 +94,7 @@
       "diffColor": "#f59e0b",
       "category": "cardio",
       "videoUrl": "https://stream.mux.com/JLSJNCU01rUIoycfxMNq2wYkgwmtc5aDfMwBzvBNrPVQ.m3u8",
+      "imageUrl": "https://vlfnixgkhfyidmhrglrj.supabase.co/storage/v1/object/public/workout-thumbnails/6.png",
       "desc": "Marching in place, side steps, and gentle movements that get your heart rate up without jarring your joints.",
       "cal": 140,
       "overviewExercises": [
@@ -111,6 +116,7 @@
       "diffColor": "#22c55e",
       "category": "pilates",
       "videoUrl": "https://stream.mux.com/GguvlJCOTaMRxP5vpalTrVHbkNrJ02xNSgapPsQzBsg4.m3u8",
+      "imageUrl": "https://vlfnixgkhfyidmhrglrj.supabase.co/storage/v1/object/public/workout-thumbnails/4.png",
       "desc": "Core-strengthening moves adapted for beginners. Focus on breathing and controlled movements.",
       "cal": 95,
       "overviewExercises": [
@@ -131,6 +137,7 @@
       "diffColor": "#22c55e",
       "category": "chair",
       "videoUrl": "https://stream.mux.com/Gsr3UEIHr1V02Wuz9bPOu5c1xX9oObi27vc2leedChVk.m3u8",
+      "imageUrl": "https://vlfnixgkhfyidmhrglrj.supabase.co/storage/v1/object/public/workout-thumbnails/1.png",
       "desc": "Seated exercises to strengthen and tone your back, shoulders, and posture. Feel taller and stronger from your chair.",
       "cal": 80,
       "overviewExercises": [
@@ -153,7 +160,7 @@
       "category": "yoga",
       "videoUrl": "https://stream.mux.com/I79016RuOu9ETq02kUw5SnjiqKcSbb1MR01yMyK4M2KMvQ",
       "videoUrlTV": "https://stream.mux.com/1F5A01yCQ018IAKei7r00z6yGG6CEzw301gcTkrrT8PR1Jg.m3u8",
-      "imageUrl": "https://vlfnixgkhfyidmhrglrj.supabase.co/storage/v1/object/public/workout-thumbnails/morning-yoga-flow-1771708773767.png",
+      "imageUrl": "https://vlfnixgkhfyidmhrglrj.supabase.co/storage/v1/object/public/workout-thumbnails/7.png",
       "desc": "Relaxing chair yoga for when you want to stretch without leaving your seat. Perfect for any time of day.",
       "cal": 60,
       "overviewExercises": []
@@ -166,7 +173,7 @@
       "category": "yoga",
       "videoUrl": "https://stream.mux.com/IFdOD92XBWGkLEJ25sJAI5lWOkfg00ktJ00Oy4AN02rVMM.m3u8",
       "videoUrlTV": "",
-      "imageUrl": "",
+      "imageUrl": "https://vlfnixgkhfyidmhrglrj.supabase.co/storage/v1/object/public/workout-thumbnails/10.png",
       "desc": "A calming seated chair yoga session to improve flexibility and relieve tension. Great for mornings or breaks.",
       "cal": 65,
       "overviewExercises": []
@@ -179,7 +186,7 @@
       "category": "bottle",
       "videoUrl": "https://stream.mux.com/3vS025RItuJ5ne4sJ8yzOGTj01VGBsgSoUJjXS01g83CfU.m3u8",
       "videoUrlTV": "",
-      "imageUrl": "",
+      "imageUrl": "https://vlfnixgkhfyidmhrglrj.supabase.co/storage/v1/object/public/workout-thumbnails/2.png",
       "desc": "Upbeat cardio workout using water bottles as light weights. Burn calories and build strength at the same time!",
       "cal": 110,
       "overviewExercises": []
@@ -192,7 +199,7 @@
       "category": "yoga",
       "videoUrl": "https://stream.mux.com/YRDEbjIGI9rtpWXXIXBPdBY2Z6TZt4ndLzbOwBytCic.m3u8",
       "videoUrlTV": "",
-      "imageUrl": "",
+      "imageUrl": "https://vlfnixgkhfyidmhrglrj.supabase.co/storage/v1/object/public/workout-thumbnails/9.png",
       "desc": "Gentle stretching and breathing exercises designed for flexibility and calm. Perfect start to your day.",
       "cal": 85,
       "overviewExercises": []
@@ -205,7 +212,7 @@
       "category": "walking",
       "videoUrl": "https://stream.mux.com/jLG2LKYkCeNtOm00p2H2lh2TVzdpg1BpnjG6imZNboD8.m3u8",
       "videoUrlTV": "",
-      "imageUrl": "",
+      "imageUrl": "https://vlfnixgkhfyidmhrglrj.supabase.co/storage/v1/object/public/workout-thumbnails/5.png",
       "desc": "Brisk walk with intervals of faster pace. Focus on posture and arm movement for a full-body benefit.",
       "cal": 120,
       "overviewExercises": []
@@ -218,7 +225,7 @@
       "category": "bottle",
       "videoUrl": "https://stream.mux.com/VbiCvswuXxcrM5IQj3V7noDDFUY599wmGygCBLqTEi8.m3u8",
       "videoUrlTV": "",
-      "imageUrl": "",
+      "imageUrl": "https://vlfnixgkhfyidmhrglrj.supabase.co/storage/v1/object/public/workout-thumbnails/3.png",
       "desc": "Grab a water bottle and build strength with simple, effective exercises. No gym equipment needed!",
       "cal": 75,
       "overviewExercises": []
@@ -231,7 +238,7 @@
       "category": "stretching",
       "videoUrl": "https://stream.mux.com/ACumG7EhpQwlRVp1IDu1o8yyDPUBa49ZsVx6nof02rlg.m3u8",
       "videoUrlTV": "",
-      "imageUrl": "",
+      "imageUrl": "https://vlfnixgkhfyidmhrglrj.supabase.co/storage/v1/object/public/workout-thumbnails/8.png",
       "desc": "Gentle chair stretching and deep breathing. Let your body recover and rebuild from your comfy seat.",
       "cal": 30,
       "overviewExercises": []
@@ -244,7 +251,7 @@
       "category": "cardio",
       "videoUrl": "https://stream.mux.com/JLSJNCU01rUIoycfxMNq2wYkgwmtc5aDfMwBzvBNrPVQ.m3u8",
       "videoUrlTV": "",
-      "imageUrl": "",
+      "imageUrl": "https://vlfnixgkhfyidmhrglrj.supabase.co/storage/v1/object/public/workout-thumbnails/6.png",
       "desc": "Marching in place, side steps, and gentle movements that get your heart rate up without jarring your joints.",
       "cal": 140,
       "overviewExercises": []
@@ -257,7 +264,7 @@
       "category": "pilates",
       "videoUrl": "https://stream.mux.com/GguvlJCOTaMRxP5vpalTrVHbkNrJ02xNSgapPsQzBsg4.m3u8",
       "videoUrlTV": "",
-      "imageUrl": "",
+      "imageUrl": "https://vlfnixgkhfyidmhrglrj.supabase.co/storage/v1/object/public/workout-thumbnails/4.png",
       "desc": "Core-strengthening moves adapted for beginners. Focus on breathing and controlled movements.",
       "cal": 95,
       "overviewExercises": []
@@ -270,7 +277,7 @@
       "category": "chair",
       "videoUrl": "https://stream.mux.com/Gsr3UEIHr1V02Wuz9bPOu5c1xX9oObi27vc2leedChVk.m3u8",
       "videoUrlTV": "",
-      "imageUrl": "",
+      "imageUrl": "https://vlfnixgkhfyidmhrglrj.supabase.co/storage/v1/object/public/workout-thumbnails/1.png",
       "desc": "Seated exercises to strengthen and tone your back, shoulders, and posture. Feel taller and stronger from your chair.",
       "cal": 80,
       "overviewExercises": []
