@@ -1553,6 +1553,15 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
       next.scrollTop = 0;
       window.scrollTo(0, 0);
 
+      // Track EVERY quiz step via Google Analytics
+      if (typeof gtag !== 'undefined') {
+        gtag('event', 'quiz_step', {
+          event_category: 'quiz',
+          event_label: 'step_' + step,
+          value: step
+        });
+      }
+
       // Track quiz milestones via TikTok Pixel
       if (typeof ttq !== 'undefined') {
         if (step === 2) {
