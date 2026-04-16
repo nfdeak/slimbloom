@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LFJ8RFNZ44"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-LFJ8RFNZ44');
+</script>
 <!-- TikTok Pixel Code Start -->
 <script>
 !function (w, d, t) {
@@ -3883,6 +3891,15 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
           content_name: 'Lazy Weight Loss Plan',
           value: _pixelPrice,
           currency: 'USD'
+        });
+      }
+      // Fire GA purchase event for source attribution
+      if (typeof gtag !== 'undefined') {
+        gtag('event', 'purchase', {
+          transaction_id: 'lwl_' + Date.now(),
+          currency: 'USD',
+          value: _pixelPrice,
+          items: [{ item_id: 'lazy-weight-loss-plan', item_name: 'Lazy Weight Loss Plan', price: _pixelPrice }]
         });
       }
       // Mark phone lead as converted (fire-and-forget)

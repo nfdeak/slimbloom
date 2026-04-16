@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LFJ8RFNZ44"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-LFJ8RFNZ44');
+</script>
 <!-- TikTok Pixel Code Start -->
 <script>
 !function (w, d, t) {
@@ -21,6 +29,12 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
         content_name: 'Lazy Weight Loss Plans Page',
         value: 39.99,
         currency: 'USD'
+      });
+    }
+    if (typeof gtag !== 'undefined') {
+      gtag('event', 'view_plans', {
+        event_category: 'funnel',
+        event_label: 'plans_page'
       });
     }
   });
@@ -1461,6 +1475,14 @@ function redirectToCheckout() {
       content_name: _selectedPlanName || 'Lazy Weight Loss Plan',
       value: _checkoutPrice,
       currency: 'USD'
+    });
+  }
+  // Fire GA begin_checkout event
+  if (typeof gtag !== 'undefined') {
+    gtag('event', 'begin_checkout', {
+      currency: 'USD',
+      value: _checkoutPrice,
+      items: [{ item_id: _selectedPlanId, item_name: _selectedPlanName || 'Lazy Weight Loss Plan', price: _checkoutPrice }]
     });
   }
   // Redirect to Whop's hosted checkout page
