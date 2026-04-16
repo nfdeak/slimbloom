@@ -697,6 +697,40 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
     color: #C07A5C;
     margin: 0 0 12px;
   }
+  .hero-image {
+    width: 100%;
+    max-width: 280px;
+    margin: 0 auto 16px;
+    border-radius: 16px;
+    overflow: hidden;
+    aspect-ratio: 4/3;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+  }
+  .hero-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 15%;
+  }
+  .hero-cta {
+    display: block;
+    width: 100%;
+    max-width: 340px;
+    margin: 16px auto 0;
+    padding: 18px 32px;
+    background: #C07A5C;
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 15px rgba(192,122,92,0.3);
+    letter-spacing: 0.3px;
+  }
+  .hero-cta:active { transform: scale(0.98); }
+  @media (hover: hover) { .hero-cta:hover { background: #A8654A; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(192,122,92,0.4); } }
   .benefits-row {
     display: flex;
     justify-content: center;
@@ -875,6 +909,8 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
     .category-label { padding: 8px 0 2px; font-size: 10px; }
     .progress-bar { height: 2px; }
     .landing-title { font-size: 22px; margin: 16px 0 4px; }
+    .hero-image { max-width: 220px; }
+    .hero-cta { font-size: 16px; padding: 16px 24px; }
     .landing-subtitle { font-size: 13px; margin-bottom: 16px; }
     .age-card-img { font-size: 36px; }
     .age-card-btn { padding: 10px; font-size: 14px; }
@@ -936,10 +972,30 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
       <div class="landing-nav-brand">Lazy<span>WeightLoss</span></div>
       <button class="landing-nav-login" onclick="openLoginModal()">Log In</button>
     </div>
-    <div style="padding: 0 20px; width:100%;">
+
+    <!-- PHASE 1: Hero CTA (shown first) -->
+    <div id="landing-hero" style="padding: 0 20px; width:100%;">
+      <div class="hero-image">
+        <img src="https://vlfnixgkhfyidmhrglrj.supabase.co/storage/v1/object/public/quiz-images/2.png" alt="Lazy Weight Loss">
+      </div>
       <h2 class="landing-title">The Lazy Weight Loss Plan</h2>
-      <p class="landing-subtitle">Lose weight with just 10 minutes a day</p>
-      <p class="tap-cue">&#128071; Tap your age to start the free quiz</p>
+      <p class="landing-subtitle">Lose weight with just 10 minutes a day — no gym, no equipment, no stress.</p>
+      <button class="hero-cta" onclick="showAgeSelection()">Start My Plan &#10095;</button>
+      <div class="social-proof" style="margin-top: 16px;">
+        <span class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+        <span class="proof-text">Trusted by 1,000+ women</span>
+      </div>
+      <div class="benefits-row" style="margin-top: 12px;">
+        <div class="benefit-item"><span class="benefit-check">&#10003;</span> 60-sec quiz</div>
+        <div class="benefit-item"><span class="benefit-check">&#10003;</span> Results in 21 days</div>
+        <div class="benefit-item"><span class="benefit-check">&#10003;</span> No gym needed</div>
+      </div>
+    </div>
+
+    <!-- PHASE 2: Age Selection (hidden until CTA clicked) -->
+    <div id="landing-age" style="padding: 0 20px; width:100%; display: none;">
+      <h2 class="landing-title" style="margin-top: 20px;">Select your age group</h2>
+      <p class="landing-subtitle">This helps us personalize your plan</p>
       <div class="age-grid">
         <div class="age-card" onclick="selectAndAdvance(1, '35-44')">
           <div class="age-card-img"><img src="https://vlfnixgkhfyidmhrglrj.supabase.co/storage/v1/object/public/quiz-images/1.png" alt="35-44"></div>
@@ -957,15 +1013,6 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
           <div class="age-card-img"><img src="https://vlfnixgkhfyidmhrglrj.supabase.co/storage/v1/object/public/quiz-images/4.png" alt="65+"></div>
           <button class="age-card-btn">65+ <span>&#10095;</span></button>
         </div>
-      </div>
-      <div class="social-proof">
-        <span class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
-        <span class="proof-text">Trusted by 1,000+ women</span>
-      </div>
-      <div class="benefits-row">
-        <div class="benefit-item"><span class="benefit-check">&#10003;</span> 60-sec quiz</div>
-        <div class="benefit-item"><span class="benefit-check">&#10003;</span> Results in 21 days</div>
-        <div class="benefit-item"><span class="benefit-check">&#10003;</span> No gym needed</div>
       </div>
       <p class="terms-text">By continuing, you confirm that you have read, understood, and agreed to our <a href="/terms-of-use" target="_blank">Terms of Use</a>, <a href="/privacy-policy" target="_blank">Privacy Policy</a>, and <a href="/refund-policy" target="_blank">Refund Policy</a>.</p>
     </div>
@@ -1575,6 +1622,15 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
   let currentStep = 1;
   const totalSteps = 36;
   const answers = {};
+
+  function showAgeSelection() {
+    document.getElementById('landing-hero').style.display = 'none';
+    document.getElementById('landing-age').style.display = 'block';
+    // Fire GA event for CTA click
+    if (typeof gtag !== 'undefined') {
+      gtag('event', 'quiz_cta_click', { event_category: 'funnel', event_label: 'start_my_plan' });
+    }
+  }
 
   // Detect if user is in North America via timezone
   var _isNorthAmerica = (function() {

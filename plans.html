@@ -386,6 +386,30 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
     }
     .cta-btn:hover { background: #a8654a; }
 
+    .urgency-timer {
+      text-align: center;
+      font-size: 13px;
+      color: #B8532F;
+      background: #FFF3EE;
+      border: 1px solid #F5D5C8;
+      border-radius: 10px;
+      padding: 10px 16px;
+      margin-top: 16px;
+    }
+    .urgency-timer strong { color: #B8532F; }
+    .urgency-icon { margin-right: 4px; }
+
+    .trust-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 12px;
+      font-size: 11px;
+      color: #8A8279;
+      flex-wrap: wrap;
+    }
+
     .payment-cards {
       display: flex; align-items: center; justify-content: center;
       flex-wrap: wrap; gap: 6px; margin-top: 14px;
@@ -1071,7 +1095,20 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
       </div>
     </div>
 
+    <div class="urgency-timer" id="urgencyTimer">
+      <span class="urgency-icon">&#9200;</span>
+      <span>Your personalized plan expires in <strong id="countdownTimer">14:59</strong></span>
+    </div>
+
     <button class="cta-btn" id="ctaBtn" onclick="handleGetPlan()">GET MY PLAN</button>
+
+    <div class="trust-row">
+      <span>&#128274; Secure checkout</span>
+      <span>&#8226;</span>
+      <span>30-day guarantee</span>
+      <span>&#8226;</span>
+      <span>Cancel anytime</span>
+    </div>
 
     <div class="payment-cards">
       <svg viewBox="0 0 38 24" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Visa"><rect width="38" height="24" rx="3" fill="#fff" stroke="#E8E0D8"/><path d="M15.764 16.23h-2.39l1.496-9.216h2.39l-1.496 9.216zm9.14-8.994a5.89 5.89 0 00-2.136-.391c-2.352 0-4.01 1.253-4.024 3.047-.014 1.326 1.184 2.065 2.088 2.507.926.452 1.238.74 1.234 1.144-.006.618-.74.9-1.424.9-.952 0-1.458-.14-2.24-.484l-.306-.147-.334 2.06c.556.257 1.584.48 2.652.492 2.502 0 4.13-1.236 4.148-3.154.01-1.052-.626-1.852-2-2.51-.832-.428-1.342-.712-1.336-1.146 0-.384.43-.795 1.362-.795a4.12 4.12 0 011.776.352l.214.106.322-1.982zM28.632 7.014h-1.84c-.57 0-.996.164-1.246.764l-3.534 8.452h2.5l.498-1.38h3.054l.29 1.38h2.206l-1.928-9.216zm-2.94 5.936c.198-.534 .954-2.588.954-2.588-.014.024.196-.536.318-.884l.162.798s.458 2.21.554 2.674h-1.988zM12.288 7.014l-2.332 6.282-.248-1.282c-.434-1.472-1.786-3.066-3.298-3.864l2.132 8.07h2.52l3.748-9.206h-2.522z" fill="#1A1F71"/><path d="M7.86 7.014H4.026L4 7.19c2.988.764 4.966 2.608 5.784 4.826l-.836-4.24c-.144-.582-.562-.748-1.088-.762z" fill="#F7A600"/></svg>
@@ -1441,6 +1478,20 @@ function applyCoupon() {
 
 var _selectedPlanId = null;
 var _selectedPlanName = null;
+
+// Countdown timer (15 minutes from page load)
+(function() {
+  var totalSeconds = 15 * 60;
+  var timerEl = document.getElementById('countdownTimer');
+  if (!timerEl) return;
+  var interval = setInterval(function() {
+    totalSeconds--;
+    if (totalSeconds <= 0) { clearInterval(interval); timerEl.textContent = '0:00'; return; }
+    var m = Math.floor(totalSeconds / 60);
+    var s = totalSeconds % 60;
+    timerEl.textContent = m + ':' + (s < 10 ? '0' : '') + s;
+  }, 1000);
+})();
 
 function handleGetPlan() {
   if (couponApplied) {
