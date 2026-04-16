@@ -65,7 +65,7 @@ serve(async (req) => {
     const { data: sentLogs } = await supabase
       .from('sms_log')
       .select('phone_lead_id, campaign_id, status')
-      .in('status', ['sent', 'pending'])
+      .in('status', ['sent', 'pending', 'failed'])
 
     // Build a set of "leadId:campaignId" for quick lookup
     const sentSet = new Set(
