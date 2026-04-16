@@ -670,7 +670,51 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
     font-size: 15px;
     color: #8A8279;
     text-align: center;
-    margin-bottom: 32px;
+    margin-bottom: 12px;
+  }
+  .social-proof {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .social-proof .stars {
+    color: #F5A623;
+    font-size: 16px;
+    letter-spacing: 1px;
+  }
+  .social-proof .proof-text {
+    font-size: 13px;
+    color: #5A4E45;
+    font-weight: 600;
+  }
+  .tap-cue {
+    text-align: center;
+    font-size: 14px;
+    font-weight: 700;
+    color: #C07A5C;
+    margin: 0 0 12px;
+  }
+  .benefits-row {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+  }
+  .benefit-item {
+    font-size: 12px;
+    color: #5A4E45;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .benefit-check {
+    color: #4CAF50;
+    font-weight: 700;
   }
   .age-grid {
     display: grid;
@@ -893,8 +937,13 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
       <button class="landing-nav-login" onclick="openLoginModal()">Log In</button>
     </div>
     <div style="padding: 0 20px; width:100%;">
-      <h2 class="landing-title">Your personalized weight loss plan</h2>
-      <p class="landing-subtitle">Select your age group to get started</p>
+      <h2 class="landing-title">The Lazy Weight Loss Plan</h2>
+      <p class="landing-subtitle">Lose weight with just 10 minutes a day</p>
+      <div class="social-proof">
+        <span class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+        <span class="proof-text">Trusted by 1,000+ women</span>
+      </div>
+      <p class="tap-cue">&#128071; Tap your age to start your free plan</p>
       <div class="age-grid">
         <div class="age-card" onclick="selectAndAdvance(1, '35-44')">
           <div class="age-card-img"><img src="https://vlfnixgkhfyidmhrglrj.supabase.co/storage/v1/object/public/quiz-images/1.png" alt="35-44"></div>
@@ -912,6 +961,11 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
           <div class="age-card-img"><img src="https://vlfnixgkhfyidmhrglrj.supabase.co/storage/v1/object/public/quiz-images/4.png" alt="65+"></div>
           <button class="age-card-btn">65+ <span>&#10095;</span></button>
         </div>
+      </div>
+      <div class="benefits-row">
+        <div class="benefit-item"><span class="benefit-check">&#10003;</span> 60-sec quiz</div>
+        <div class="benefit-item"><span class="benefit-check">&#10003;</span> Results in 21 days</div>
+        <div class="benefit-item"><span class="benefit-check">&#10003;</span> No gym needed</div>
       </div>
       <p class="terms-text">By continuing, you confirm that you have read, understood, and agreed to our <a href="/terms-of-use" target="_blank">Terms of Use</a>, <a href="/privacy-policy" target="_blank">Privacy Policy</a>, and <a href="/refund-policy" target="_blank">Refund Policy</a>.</p>
     </div>
