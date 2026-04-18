@@ -973,29 +973,10 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
       <button class="landing-nav-login" onclick="openLoginModal()">Log In</button>
     </div>
 
-    <!-- PHASE 1: Hero CTA (shown first) -->
-    <div id="landing-hero" style="padding: 0 20px; width:100%;">
-      <div class="hero-image">
-        <img src="https://vlfnixgkhfyidmhrglrj.supabase.co/storage/v1/object/public/quiz-images/2.png" alt="Lazy Weight Loss">
-      </div>
+    <div style="padding: 0 20px; width:100%;">
       <h2 class="landing-title">The Lazy Weight Loss Plan</h2>
-      <p class="landing-subtitle">Lose weight with just 10 minutes a day — no gym, no equipment, no stress.</p>
-      <button class="hero-cta" onclick="showAgeSelection()">Start the 60-Second Quiz &#10095;</button>
-      <div class="social-proof" style="margin-top: 16px;">
-        <span class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
-        <span class="proof-text">Trusted by 1,000+ women</span>
-      </div>
-      <div class="benefits-row" style="margin-top: 12px;">
-        <div class="benefit-item"><span class="benefit-check">&#10003;</span> 60-sec quiz</div>
-        <div class="benefit-item"><span class="benefit-check">&#10003;</span> Results in 21 days</div>
-        <div class="benefit-item"><span class="benefit-check">&#10003;</span> No gym needed</div>
-      </div>
-    </div>
-
-    <!-- PHASE 2: Age Selection (hidden until CTA clicked) -->
-    <div id="landing-age" style="padding: 0 20px; width:100%; display: none;">
-      <h2 class="landing-title" style="margin-top: 20px;">Select your age group</h2>
-      <p class="landing-subtitle">This helps us personalize your plan</p>
+      <p class="landing-subtitle">Lose weight with just 10 minutes a day</p>
+      <p class="tap-cue">&#128071; Tap your age to start the 60-second quiz</p>
       <div class="age-grid">
         <div class="age-card" onclick="selectAndAdvance(1, '35-44')">
           <div class="age-card-img"><img src="https://vlfnixgkhfyidmhrglrj.supabase.co/storage/v1/object/public/quiz-images/1.png" alt="35-44"></div>
@@ -1013,6 +994,15 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
           <div class="age-card-img"><img src="https://vlfnixgkhfyidmhrglrj.supabase.co/storage/v1/object/public/quiz-images/4.png" alt="65+"></div>
           <button class="age-card-btn">65+ <span>&#10095;</span></button>
         </div>
+      </div>
+      <div class="social-proof">
+        <span class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+        <span class="proof-text">Trusted by 1,000+ women</span>
+      </div>
+      <div class="benefits-row">
+        <div class="benefit-item"><span class="benefit-check">&#10003;</span> 60-sec quiz</div>
+        <div class="benefit-item"><span class="benefit-check">&#10003;</span> Results in 21 days</div>
+        <div class="benefit-item"><span class="benefit-check">&#10003;</span> No gym needed</div>
       </div>
       <p class="terms-text">By continuing, you confirm that you have read, understood, and agreed to our <a href="/terms-of-use" target="_blank">Terms of Use</a>, <a href="/privacy-policy" target="_blank">Privacy Policy</a>, and <a href="/refund-policy" target="_blank">Refund Policy</a>.</p>
     </div>
